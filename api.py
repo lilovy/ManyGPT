@@ -6,14 +6,14 @@ from uuid import uuid4
 from datetime import datetime
 import uvicorn
 
-from src.llms.core import LLMs
+from src.core.llms import LLMs
 import json
 import random
 
 
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="src/static"), name="static")
-templates = Jinja2Templates(directory="src/templates")
+app.mount("/static", StaticFiles(directory="src/frontend/static"), name="static")
+templates = Jinja2Templates(directory="src/frontend/templates")
 
 @app.get("/")
 async def root(request: Request):
@@ -24,7 +24,7 @@ async def ws_endpoint(websocket: WebSocket):
     await websocket.accept()
 
     client = LLMs("o6BvUBrXYXuis5Xb5Y1CLg%3D%3D")
-    
+
     while True:
         message = await websocket.receive_text() 
         msg = client.ask(message, flush=True)
