@@ -37,4 +37,4 @@ button.addEventListener("click", () => {
     const message = document.getElementById("message").value
     socket.send(message)
     }
-)  
+)
