@@ -1,21 +1,34 @@
 from fastapi import APIRouter, Depends, Request, status
 
 from ...models.project import UserProject, NewUserProject
+from ...dependencies.dependencies import *
 # from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/project", tags=["project"])
 
 
+@router.get("/count")
+def get_count_projects(
+    user_id: int,
+    db: DBHelper = Depends(get_db),
+):
+    count = db.get_project_count(user_id)
+    return {
+        "user_id": user_id,
+        "projects": count,
+    }
+
+
 @router.get("/all")
 def get_user_projects(
     user_id: int,
+    offset: int = Query (0, ge=0),
+    limit: int = Query(10, ge=1),
     db: DBHelper = Depends(get_db),
     ):
-    user = db.get_user()
 
-    user_id = request.state.user.get("user_id")
-    projects = db.get_user_projects(user_id)
+    projects = db.get_user_projects(user_id, offset, limit)
 
     return projects
 
@@ -25,10 +38,10 @@ def get_user_project(
     project: UserProject,
     db: DBHelper = Depends(get_db),
     ):
-    db.get_user_data_files(
+    content = db.get_user_data_files(
         project.project_id,
     )
-    return {"status": status.HTTP_200_OK}
+    return content
 
 
 @router.post("/new")

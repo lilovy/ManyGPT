@@ -9,6 +9,25 @@ from ...dependencies.dependencies import *
 
 router = APIRouter(prefix="/models", tags=["models"])
 
+
+@router.get("/count")
+def get_count_models(
+    request: Request,
+    # db: DBHelper = Depends(get_db),
+):
+    if request.state.auth.get("status") != status.HTTP_200_OK:
+        return request.state.auth
+
+    user_id = request.state.user.get("user_id")
+    count = db.get_model_count(
+        user_id,
+    )
+    return {
+        "user_id": user_id,
+        "models": count,
+    }
+
+
 @router.get("/")
 def get_user_models(
     request: Request,

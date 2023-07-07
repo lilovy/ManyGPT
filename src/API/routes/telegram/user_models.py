@@ -9,6 +9,21 @@ from ...dependencies.dependencies import *
 
 router = APIRouter(prefix="/models", tags=["models"])
 
+
+@router.get("/count")
+def get_count_models(
+    user_id: int,
+    db: DBHelper = Depends(get_db),
+):
+    count = db.get_model_count(
+        user_id,
+    )
+    return {
+        "user_id": user_id,
+        "models": count,
+    }
+
+
 @router.get("/")
 def get_user_models(
     user_id: int,
