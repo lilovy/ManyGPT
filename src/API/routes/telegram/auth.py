@@ -12,7 +12,7 @@ router = APIRouter(prefix="/auth", tags=["login"])
 @router.post("/login")
 async def login(
     user: User,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
 
     db.add_user(

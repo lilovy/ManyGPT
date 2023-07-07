@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, status
 
 from ...models.project import UserProject, NewUserProject
 from ...dependencies.dependencies import *
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/project", tags=["project"])

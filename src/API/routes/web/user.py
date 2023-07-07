@@ -5,7 +5,7 @@ from ...models.user import User, ChangeDefaultModel, ChangeUserPlan
 from ...dependencies.dependencies import * 
 from ...middleware import middleware
 
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 from sqlalchemy.orm import Session
 
 
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/user", tags=["user"])
 @router.get("/")
 async def get_user(
     request: Request,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -29,7 +29,7 @@ async def get_user(
 async def change_model(
     request: Request,
     model: ChangeDefaultModel,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -48,7 +48,7 @@ async def change_model(
 async def change_plan(
     request: Request,
     plan: ChangeUserPlan,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth

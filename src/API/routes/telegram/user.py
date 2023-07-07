@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, status, HTTPException
 from ...models.user import User, ChangeDefaultModel, ChangeUserPlan
 from ...dependencies.dependencies import *
 
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/user", tags=["user"])

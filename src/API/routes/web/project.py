@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Request, status, Query
 
 from ...models.project import UserProject, NewUserProject
 from ...dependencies.dependencies import *
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/project", tags=["project"])
@@ -11,7 +11,7 @@ router = APIRouter(prefix="/project", tags=["project"])
 @router.get("/count")
 async def get_count_projects(
     request: Request,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -31,7 +31,7 @@ async def get_user_projects(
     request: Request,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -48,7 +48,7 @@ async def get_user_projects(
 async def get_user_project_file(
     request: Request,
     project: UserProject,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -73,7 +73,7 @@ async def get_user_project_file(
 async def add_user_project(
     request: Request,
     project: NewUserProject,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth

@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 from ...models.model import UserModel
 from ...dependencies.dependencies import *
 
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/models", tags=["models"])

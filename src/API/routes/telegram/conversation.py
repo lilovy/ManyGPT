@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request, status, Query
 from ...models.conversation import Conversation, NewConversation, Msg, Bot
 
 from ...dependencies.dependencies import *
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/conversation", tags=["conversation"])
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 @router.get("/count")
 async def get_count_msg(
     user_id: int,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     count = db.get_message_count(
         user_id,
@@ -29,7 +29,7 @@ async def get_conversation(
     conversation: Conversation,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
 
     content = db.get_user_msg_history(
@@ -47,7 +47,7 @@ async def get_conversations(
     conversation: Conversation,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     content = db.get_user_conversations(
         user_id,

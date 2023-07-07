@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Request, status, Query
 from ...models.conversation import Conversation, NewConversation, Msg, Bot
 
 from ...dependencies.dependencies import *
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/conversation", tags=["conversation"])
@@ -12,7 +12,7 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 @router.get("/count")
 async def get_count_msg(
     request: Request,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -33,7 +33,7 @@ async def get_conversation(
     conversation: Conversation,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -57,7 +57,7 @@ async def get_conversations(
     conversation: Conversation,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -76,7 +76,7 @@ async def get_conversations(
 @router.get("/all/count")
 async def get_count_conversations(
     request: Request,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -97,7 +97,7 @@ async def get_count_conversations(
 async def add_conversation(
     request: Request,
     conversation: NewConversation,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -119,7 +119,7 @@ async def add_conversation(
 async def add_bot(
     request: Request,
     bot: Bot,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -144,7 +144,7 @@ async def add_bot(
 async def add_msg(
     request: Request,
     msg: Msg,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth

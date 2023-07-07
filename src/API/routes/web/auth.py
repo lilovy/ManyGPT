@@ -4,7 +4,7 @@ from .user import User
 from ...dependencies.dependencies import *
 from ...middleware import middleware
 
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/auth", tags=["login"])
@@ -15,7 +15,7 @@ async def login(
     # user: User,
     user_id: int = Form(...),
     username: str = Form(...),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     access_token_payload = {
         "status": status.HTTP_200_OK,
@@ -28,6 +28,6 @@ async def login(
     headers = {"Authorization": f"Bearer {access_token}"}
     response.set_cookie(key="access_token", value=access_token)
 
-    # db.add_user(user_id, username)
+    db.add_user(user_id, username)
 
     return {}, 201, headers

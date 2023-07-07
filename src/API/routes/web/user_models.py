@@ -4,7 +4,7 @@ from fastapi.exceptions import HTTPException
 from ...models.model import UserModel
 from ...dependencies.dependencies import *
 
-# from ....database.db import DBHelper
+from ....database.db import DBHelper
 
 
 router = APIRouter(prefix="/models", tags=["models"])
@@ -13,7 +13,7 @@ router = APIRouter(prefix="/models", tags=["models"])
 @router.get("/count")
 async def get_count_models(
     request: Request,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -33,7 +33,7 @@ async def get_user_models(
     request: Request,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -47,7 +47,7 @@ async def get_user_models(
 async def add_user_model(
     request: Request,
     model: UserModel,
-    # db: DBHelper = Depends(get_db),
+    db: DBHelper = Depends(get_db),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
