@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 
-from ...models.conversation import Conversation, NewConversation, Msg
+from ...models.conversation import Conversation, NewConversation, Msg, Bot
 
 from ...dependencies.dependencies import *
 # from ....database.db import DBHelper
@@ -10,7 +10,7 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 
 
 @router.get("/count")
-def get_count_msg(
+async def get_count_msg(
     user_id: int,
     # db: DBHelper = Depends(get_db),
 ):
@@ -25,7 +25,7 @@ def get_count_msg(
 
 
 @router.get("/")
-def get_conversation(
+async def get_conversation(
     conversation: Conversation,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
@@ -42,7 +42,7 @@ def get_conversation(
 
 
 @router.get("/all")
-def get_conversations(
+async def get_conversations(
     user_id: int,
     conversation: Conversation,
     offset: int = Query (0, ge=0),
@@ -59,7 +59,7 @@ def get_conversations(
 
 
 @router.get("/all/count")
-def get_count_conversations(
+async def get_count_conversations(
     user_id: int,
     db: DBHelper = Depends(get_db),
 ):
@@ -74,7 +74,7 @@ def get_count_conversations(
 
 
 @router.post("new")
-def add_conversation(
+async def add_conversation(
     conversation: NewConversation,
     db: DBHelper = Depends(get_db),
 ):
@@ -87,8 +87,24 @@ def add_conversation(
     return {"status": status.HTTP_201_CREATED}
 
 
+@router.post("/new/bot")
+async def add_bot(
+    bot: Bot,
+    db: DBHelper = Depends(get_db),
+):
+    db.add_user_model(
+        bot.user_id,
+        bot.name,
+        bot.system_name,
+        bot.model_id,
+        bot.prompt,
+    )
+
+    return {"status": status.HTTP_201_CREATED}
+
+
 @router.post("msg")
-def add_msg(
+async def add_msg(
     msg: Msg,
     db: DBHelper = Depends(get_db),
 ):

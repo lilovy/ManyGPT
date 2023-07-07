@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 
-from ...models.conversation import Conversation, NewConversation, Msg
+from ...models.conversation import Conversation, NewConversation, Msg, Bot
 
 from ...dependencies.dependencies import *
 # from ....database.db import DBHelper
@@ -10,7 +10,7 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 
 
 @router.get("/count")
-def get_count_msg(
+async def get_count_msg(
     request: Request,
     # db: DBHelper = Depends(get_db),
 ):
@@ -28,7 +28,7 @@ def get_count_msg(
 
 
 @router.get("/")
-def get_conversation(
+async def get_conversation(
     request: Request,
     conversation: Conversation,
     offset: int = Query (0, ge=0),
@@ -52,7 +52,7 @@ def get_conversation(
 
 
 @router.get("/all")
-def get_conversations(
+async def get_conversations(
     request: Request,
     conversation: Conversation,
     offset: int = Query (0, ge=0),
@@ -74,7 +74,7 @@ def get_conversations(
 
 
 @router.get("/all/count")
-def get_count_conversations(
+async def get_count_conversations(
     request: Request,
     # db: DBHelper = Depends(get_db),
 ):
@@ -94,7 +94,7 @@ def get_count_conversations(
 
 
 @router.post("/new")
-def add_conversation(
+async def add_conversation(
     request: Request,
     conversation: NewConversation,
     # db: DBHelper = Depends(get_db),
@@ -115,8 +115,33 @@ def add_conversation(
     return {"status": status.HTTP_201_CREATED}
 
 
+@router.post("/new/bot")
+async def add_bot(
+    request: Request,
+    bot: Bot,
+    # db: DBHelper = Depends(get_db),
+):
+    if request.state.auth.get("status") != status.HTTP_200_OK:
+        return request.state.auth
+    user = request.state.auth
+    user_id = user.get("user_id")
+    if user_id != conversation.user_id:
+        return {"status": status.HTTP_401_UNAUTHORIZED}
+
+
+    db.add_user_model(
+        bot.user_id,
+        bot.name,
+        bot.system_name,
+        bot.model_id,
+        bot.prompt,
+    )
+
+    return {"status": status.HTTP_201_CREATED}
+
+
 @router.post("/msg")
-def add_msg(
+async def add_msg(
     request: Request,
     msg: Msg,
     # db: DBHelper = Depends(get_db),

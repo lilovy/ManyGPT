@@ -10,7 +10,7 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 
 @router.get("/")
-def get_user(
+async def get_user(
     user: User,
     db: DBHelper = Depends(get_db),
     ):
@@ -21,7 +21,7 @@ def get_user(
     return user
 
 @router.put("/default_model")
-def change_model(
+async def change_model(
     change_model: ChangeDefaultModel,
     db: DBHelper = Depends(get_db),
     ):
@@ -32,7 +32,7 @@ def change_model(
     return {"status": status.HTTP_200_OK}
 
 @router.post("/plan")
-def change_plan(
+async def change_plan(
     plan: ChangeUserPlan,
     db: DBHelper = Depends(get_db),
     ):

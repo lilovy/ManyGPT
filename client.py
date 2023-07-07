@@ -27,6 +27,7 @@ web_router.include_router(conversation.router)
 
 telegram_router = APIRouter(prefix=f"{BASE_API_PATH}/telegram/{access}")
 
+core_router = APIRouter(prefix=f"{BASE_API_PATH}/core")
 
 
 app.include_router(web_router)

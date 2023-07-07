@@ -9,7 +9,7 @@ router = APIRouter(prefix="/project", tags=["project"])
 
 
 @router.get("/count")
-def get_count_projects(
+async def get_count_projects(
     request: Request,
     # db: DBHelper = Depends(get_db),
     ):
@@ -27,7 +27,7 @@ def get_count_projects(
 
 
 @router.get("/all")
-def get_user_projects(
+async def get_user_projects(
     request: Request,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
@@ -45,7 +45,7 @@ def get_user_projects(
 
 
 @router.get("/file")
-def get_user_project_file(
+async def get_user_project_file(
     request: Request,
     project: UserProject,
     # db: DBHelper = Depends(get_db),
@@ -70,7 +70,7 @@ def get_user_project_file(
 
 
 @router.post("/new")
-def add_user_project(
+async def add_user_project(
     request: Request,
     project: NewUserProject,
     # db: DBHelper = Depends(get_db),

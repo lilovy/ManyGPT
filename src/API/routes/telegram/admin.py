@@ -13,7 +13,7 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 
 
 @router.post("/limits")
-def change_limits(
+async def change_limits(
     token: str,
     plan: Subscription,
     db: DBHelper = Depends(get_db),
@@ -31,7 +31,7 @@ def change_limits(
 
 
 @router.post("/access")
-def give_access(
+async def give_access(
     token: str,
     plan: ChangeUserPlan,
     db: DBHelper = Depends(get_db),
@@ -50,5 +50,5 @@ def give_access(
 
 
 @router.get("/stats")
-def view_stats():
+async def view_stats():
     ...

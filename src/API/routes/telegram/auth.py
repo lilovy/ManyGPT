@@ -10,7 +10,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/auth", tags=["login"])
 
 @router.post("/login")
-def login(
+async def login(
     user: User,
     # db: DBHelper = Depends(get_db),
     ):

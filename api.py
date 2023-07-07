@@ -28,8 +28,11 @@ async def ws_endpoint(websocket: WebSocket):
     while True:
         message = await websocket.receive_text() 
         msg = client.ask(message, flush=True)
+        full_response = ""
         for chunk in msg:
+            full_response += chunk
             await websocket.send_text(chunk)
+        
         await websocket.send_text("<br><br>")
 
 

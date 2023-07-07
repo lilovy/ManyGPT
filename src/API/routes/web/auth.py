@@ -10,7 +10,7 @@ from ...middleware import middleware
 router = APIRouter(prefix="/auth", tags=["login"])
 
 @router.post("/login")
-def login(
+async def login(
     response: Response,
     # user: User,
     user_id: int = Form(...),

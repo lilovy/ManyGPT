@@ -11,7 +11,7 @@ router = APIRouter(prefix="/models", tags=["models"])
 
 
 @router.get("/count")
-def get_count_models(
+async def get_count_models(
     request: Request,
     # db: DBHelper = Depends(get_db),
 ):
@@ -29,7 +29,7 @@ def get_count_models(
 
 
 @router.get("/")
-def get_user_models(
+async def get_user_models(
     request: Request,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
@@ -44,7 +44,7 @@ def get_user_models(
     return user_models
 
 @router.post("/new")
-def add_user_model(
+async def add_user_model(
     request: Request,
     model: UserModel,
     # db: DBHelper = Depends(get_db),

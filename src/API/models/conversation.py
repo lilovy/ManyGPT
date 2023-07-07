@@ -15,3 +15,11 @@ class Msg(BaseModel):
     convo_id: int
     question: str
     answer: str
+
+class Bot(BaseModel):
+    user_id: int
+    name: str
+    system_name: str
+    model_id: int
+    model: str
+    prompt: str

@@ -7,8 +7,8 @@ from enum import Enum
 class LlmModels(Enum):
     ChatGPT = "chinchilla"
     Sage = "capybara"
-    GPT4 = "beaver"
-    PaLM = "acouchy"
+    # GPT4 = "beaver"
+    # PaLM = "acouchy"
     Claude = "a2"
 
 class LLMs(object):
@@ -24,15 +24,30 @@ class LLMs(object):
     def ask(
         self,
         message: str,
-        model: LlmModels = LlmModels.Sage,
+        model: str = "capybara",
         flush: bool = False,
     ):
-        model = model.value
-        for chunk in self._client.send_message(model, message):
+        content = self._client.send_message(model, message)
+
+        for chunk in content:
             if flush:
                 yield chunk["text_new"]
-        # if not flush:
-        #     return chunk["text"]
+        yield chunk["text"]
+    
+    def new_bot(
+        self,
+        name: str,
+        prompt: str,
+        base_model: str,
+    ):
+        bot = self._client.create_bot(
+            name,
+            prompt,
+            base_model,
+            prompt_public=False,
+            
+        )
+        return bot
 
 
 if __name__ == "__main__":
