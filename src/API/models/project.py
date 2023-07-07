@@ -11,5 +11,6 @@ class NewUserProject(BaseModel):
     name: str
     mimetype: str
     model_id: int
+    model: str
     prompt: str
     file: UploadFile

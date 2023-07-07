@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 
+from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject
 from ...dependencies.dependencies import *
 from ....database.db import DBHelper
@@ -74,6 +75,7 @@ async def add_user_project(
     request: Request,
     project: NewUserProject,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
     ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -81,6 +83,12 @@ async def add_user_project(
     user_id = user.get("user_id")
     if user_id != project.user_id:
         return {"status": status.HTTP_401_UNAUTHORIZED}
+
+    llm.new_bot(
+        project.name,
+        project.prompt,
+        project.model,
+    )
 
     db.add_project(
         user_id=project.user_id,

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Request, status, Query
 
+from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject
 from ...dependencies.dependencies import *
 from ....database.db import DBHelper
@@ -48,7 +49,13 @@ async def get_user_project(
 async def add_user_project(
     project: NewUserProject,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
     ):
+    llm.new_bot(
+        project.name,
+        project.prompt,
+        project.model,
+    )
 
     db.add_project(
         user_id=project.user_id,

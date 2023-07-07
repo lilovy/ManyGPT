@@ -33,16 +33,16 @@ web_router.include_router(web_user.router)
 web_router.include_router(web_auth.router)
 web_router.include_router(web_user_models.router)
 web_router.include_router(web_project.router)
-web_router.include_router(web_conversation.router)
+web_router.include_router(web_convo.router)
 
 
-telegram_router = APIRouter(prefix=f"{BASE_API_PATH}/telegram/{access}")
+telegram_router = APIRouter(prefix=f"{BASE_API_PATH}/telegram")
 
 telegram_router.include_router(telegram_user.router)
 telegram_router.include_router(telegram_auth.router)
 telegram_router.include_router(telegram_user_models.router)
 telegram_router.include_router(telegram_project.router)
-telegram_router.include_router(telegram_conversation.router)
+telegram_router.include_router(telegram_convo.router)
 telegram_router.include_router(telegram_admin.router)
 
 

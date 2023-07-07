@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 from fastapi.exceptions import HTTPException
 
+from ....core.llms import LLMs
 from ...models.model import UserModel
 from ...dependencies.dependencies import *
 
@@ -41,10 +42,18 @@ async def get_user_models(
 async def add_user_model(
     model: UserModel,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
     ):
     if not db.get_user(model.user_id):
         return {"status": status.HTTP_401_UNAUTHORIZED}
     user_id = user.get("user_id")
+
+    llm.new_bot(
+        model.system_name,
+        model.prompt,
+        model.model,
+    )
+
     db.add_user_model(
         model.user_id,
         model.name,

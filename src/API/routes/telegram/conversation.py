@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 
 from ...models.conversation import Conversation, NewConversation, Msg, Bot
-
+from ....core.llms import LLMs
 from ...dependencies.dependencies import *
 from ....database.db import DBHelper
 
@@ -91,7 +91,14 @@ async def add_conversation(
 async def add_bot(
     bot: Bot,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
 ):
+    llm.new_bot(
+        bot.name,
+        bot.prompt,
+        bot.model,
+    )
+
     db.add_user_model(
         bot.user_id,
         bot.name,

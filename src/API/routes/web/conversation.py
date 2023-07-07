@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 
+from ....core.llms import LLMs
 from ...models.conversation import Conversation, NewConversation, Msg, Bot
 
 from ...dependencies.dependencies import *
@@ -120,6 +121,7 @@ async def add_bot(
     request: Request,
     bot: Bot,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
         return request.state.auth
@@ -128,6 +130,11 @@ async def add_bot(
     if user_id != conversation.user_id:
         return {"status": status.HTTP_401_UNAUTHORIZED}
 
+    llm.new_bot(
+        bot.name,
+        bot.prompt,
+        bot.model,
+    )
 
     db.add_user_model(
         bot.user_id,

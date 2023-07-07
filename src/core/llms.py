@@ -50,6 +50,10 @@ class LLMs(object):
         return bot
 
 
+def get_llm(token: str, proxy: str | None = None):
+    llm = LLMs(token, proxy)
+    yield llm
+
 if __name__ == "__main__":
     client = LLMs("o6BvUBrXYXuis5Xb5Y1CLg%3D%3D")
     ask = client.ask("hi, how a u?", flush=True)

@@ -14,10 +14,9 @@ router = APIRouter(prefix="/core", tags=["core"])
 async def ask_ws(
     ws: WebSocket,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
     ):
     await ws.accept()
-
-    llm = LLMs("token")
 
     while True:
         content = await ws.receive_json()
@@ -46,8 +45,8 @@ async def ask(
     request: Request,
     message: Message,
     db: DBHelper = Depends(get_db),
+    llm: LLMs = Depends(get_llm),
 ):
-    llm = LLMs("token")
 
     content = llm.ask(
         message.request,
