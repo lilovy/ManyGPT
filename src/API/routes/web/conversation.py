@@ -13,6 +13,7 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 @router.get("/count")
 async def get_count_msg(
     request: Request,
+    msg: Conversation,
     db: DBHelper = Depends(get_db),
 ):
     if request.state.auth.get("status") != status.HTTP_200_OK:
@@ -20,7 +21,8 @@ async def get_count_msg(
 
     user_id = request.state.user.get("user_id")
     count = db.get_message_count(
-        user_id,
+        msg.user_id,
+        msg.convo_id,
     )
     return {
         "user_id": user_id,

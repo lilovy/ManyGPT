@@ -11,11 +11,12 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 
 @router.get("/count")
 async def get_count_msg(
-    user_id: int,
+    msg: Conversation,
     db: DBHelper = Depends(get_db),
 ):
     count = db.get_message_count(
-        user_id,
+        msg.user_id,
+        msg.convo_id,
     )
 
     return {
