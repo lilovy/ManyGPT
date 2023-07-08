@@ -12,11 +12,11 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 @router.get("/", response_model=UserOutput, status_code=200, responses={401: {"model": ResponseStatus}})
 async def get_user(
-    user: User,
+    user_id: int,
     db: DBHelper = Depends(get_db),
     ):
 
-    user = db.get_user(user.user_id)
+    user = db.get_user(user_id)
     if not user:
         return {"status": status.HTTP_401_UNAUTHORIZED}
     return UserOutput(**user)
