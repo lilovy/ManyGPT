@@ -1,10 +1,11 @@
 import datetime
 import os.path
 from sqlalchemy import and_
+
 import sqlalchemy
-from model.enums import *
+from src.database.model.enums import *
 from sqlalchemy.orm import sessionmaker
-from model.database_elems import Base, UserToken, User, UserLLM, ProjectLLM, \
+from src.database.model.database_elems import Base, UserToken, User, UserLLM, ProjectLLM, \
     Project, FilePart, ResultData, SubscriptionType, Conversation, Message, LLM
 
 
@@ -51,10 +52,10 @@ class DBHelper:
                     user_info["default_model"] = default_llm.get_simple_dict()
         return user_info
 
-    def get_user_conversations(self, user_id: int) -> list[dict]:
+    def get_user_conversations(self, user_id: int, offset: int, limit: int) -> list[dict]:
         conversations = []
         with self.__create_session() as session:
-            conversations_list = session.query(Conversation).filter(Conversation.user_id == user_id).all()
+            conversations_list = session.query(Conversation).filter(Conversation.user_id == user_id).offset(offset).limit(limit).all()
             for c in conversations_list:
                 conversation_info = c.get_simple_dict()
                 conversation_info["user_id"] = c.user_id
@@ -209,6 +210,7 @@ class DBHelper:
         with self.__create_session() as session:
             session.add(project)
             session.commit()
+            self.__add_file_parts(project_id= project.id, full_text=str(file, "utf-8"))
 
     def __create_project_llm_and_get_new_id(self, system_name: str, llm_id: int, prompt: str):
         project_llm = ProjectLLM(model_id=llm_id, system_name=system_name, prompt=prompt)
@@ -216,6 +218,14 @@ class DBHelper:
             session.add(project_llm)
             session.commit()
             return project_llm.id
+
+    def __add_file_parts(self, project_id: int, full_text: str):
+        rows = full_text.split('\n')
+        with self.__create_session() as session:
+            for r in rows:
+                part = FilePart(r, project_id)
+                session.add(part)
+            session.commit()
 
     def add_result_data(self, project_id: int, data: str) -> None:
         result_data = ResultData(project_id=project_id, data=data)
@@ -315,5 +325,3 @@ class DBHelper:
             if user is not None:
                 return user.subscription_type.name.value
         return None
-
-
