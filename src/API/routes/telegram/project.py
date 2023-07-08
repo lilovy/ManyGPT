@@ -3,6 +3,7 @@ from fastapi.responses import FileResponse
 
 from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject, Projects
+from ...models.subscription import Subs
 from ...models.responses import ResponseStatus
 from ...models.count import Count
 from ...dependencies.dependencies import *
@@ -55,6 +56,17 @@ async def get_user_project(
             "Content-Disposition": f"attachment; filename={project.name}.txt"
         }
     )
+
+
+@router.get("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+def сhecking_project_access(
+    user_id: int,
+    db: DBHelper = Depends(get_db),
+):
+    if db.get_user_subscribe_level(user_id) == Subs.advanced.value:
+        return {"status": status.HTTP_200_OK}
+
+    return {"status": status.HTTP_401_UNAUTHORIZED}
 
 
 @router.post("/new", responses={201: {"model": ResponseStatus}})

@@ -48,7 +48,7 @@ async def ask_ws(
         
 
 
-@router.post("/ask")
+@router.post("/ask", response_model=MessageFull, status_code=200)
 async def ask(
     # request: Request,
     message: Message,
