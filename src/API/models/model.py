@@ -6,7 +6,7 @@ class UserModel(BaseModel):
     name: str
     system_name: str
     base_model_id: int
-    model: str
+    # model: str
     prompt: str
 
 class ModelBase(BaseModel):
