@@ -75,10 +75,13 @@ async def add_user_project(
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
     ):
+
+    base_model = db.get_base_model(model.base_model_id)
+
     llm.new_bot(
         project.name,
         project.prompt,
-        project.model,
+        base_model,
     )
 
     db.add_project(
@@ -87,6 +90,7 @@ async def add_user_project(
         mimetype=project.file.content_type,
         model_id=project.model_id,
         prompt=project.prompt,
+        system_name=project.
         file=await project.file.read(),
     )
     
