@@ -17,7 +17,7 @@ class NewUserProject(BaseModel):
 
 class ProjectModel(BaseModel):
     id: int
-    system_name: str
+    system_name: str 
     prompt: str
 
 class Projects(BaseModel):

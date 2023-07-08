@@ -1,6 +1,7 @@
 from fastapi import APIRouter, WebSocket, Depends, Request
 
 from ...models.message import Message, MessageFull
+from ...models.responses import ResponseStatus
 
 from ....core.llms import LLMs
 from ....database.db import DBHelper
@@ -48,7 +49,7 @@ async def ask_ws(
         
 
 
-@router.post("/ask", response_model=MessageFull, status_code=200)
+@router.post("/ask", response_model=MessageFull, status_code=200, responses={404: {"model": ResponseStatus}})
 async def ask(
     # request: Request,
     message: Message,
@@ -76,3 +77,4 @@ async def ask(
         )
 
         return MessageFull(**message, response=response)
+    return {"status": "No token"}

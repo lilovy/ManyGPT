@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, Depends, status, HTTPException, Request
-from pydantic import BaseModel, ConstrainedInt
+from pydantic import BaseModel
 
 from ...models.user import User, ChangeDefaultModel, ChangeUserPlan, UserOutput
 from ...models.responses import ResponseStatus

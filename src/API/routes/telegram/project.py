@@ -84,10 +84,10 @@ async def add_user_project(
     db.add_project(
         user_id=project.user_id,
         name=project.name,
-        mimetype=project.mimetype,
+        mimetype=project.file.content_type,
         model_id=project.model_id,
         prompt=project.prompt,
-        file=project.file,
+        file=await project.file.read(),
     )
     
     return {"status": status.HTTP_201_CREATED}

@@ -6,10 +6,10 @@ from enum import Enum
 
 class LlmModels(Enum):
     ChatGPT = "chinchilla"
+    Claude = "a2"
     Sage = "capybara"
     # GPT4 = "beaver"
     # PaLM = "acouchy"
-    Claude = "a2"
 
 class LLMs(object):
     def __init__(self, token: str, proxy: str = None):
@@ -24,7 +24,7 @@ class LLMs(object):
     def ask(
         self,
         message: str,
-        model: str = "capybara",
+        model: str = "chinchilla",
         flush: bool = False,
     ):
         content = self._client.send_message(model, message)

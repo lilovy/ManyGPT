@@ -46,7 +46,7 @@ telegram_router.include_router(telegram_convo.router)
 telegram_router.include_router(telegram_admin.router)
 
 
-core_router = APIRouter(prefix=f"{BASE_API_PATH}/core")
+core_router = APIRouter(prefix=f"{BASE_API_PATH}")
 
 core_router.include_router(core.router)
 
