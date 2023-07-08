@@ -1,11 +1,10 @@
 import datetime
 import os.path
 from sqlalchemy import and_
-
 import sqlalchemy
-from src.database.model.enums import *
+from model.enums import *
 from sqlalchemy.orm import sessionmaker
-from src.database.model.database_elems import Base, UserToken, User, UserLLM, ProjectLLM, \
+from model.database_elems import Base, UserToken, User, UserLLM, ProjectLLM, \
     Project, FilePart, ResultData, SubscriptionType, Conversation, Message, LLM
 
 
@@ -13,10 +12,10 @@ class DBHelper:
     __engine = None
 
     def __init__(self):
-        self.__engine = sqlalchemy.create_engine('sqlite:///multigpt.db', echo=True)
+        self.__engine = sqlalchemy.create_engine('sqlite:///model/multigpt.db', echo=True)
 
     def create_db(self):
-        if not os.path.exists("multigpt.db"):
+        if not os.path.exists("model/multigpt.db"):
             Base.create_db(self.__engine)
             with self.__create_session() as session:
                 free_type = SubscriptionType(name=SubscriptionLevelEnum.free, limit=30)
@@ -149,6 +148,14 @@ class DBHelper:
             result = conversations.__len__()
         return result
 
+    def get_base_model(self, model_id: int):
+        with self.__create_session() as session:
+            userllm = session.get(UserLLM, model_id)
+            if userllm is not None:
+                return userllm.llm.model.value
+            else:
+                return None
+
     def add_user(self, user_id: int, username: str) -> None:
         limit: int
         with self.__create_session() as session:
@@ -196,17 +203,25 @@ class DBHelper:
             session.commit()
         self.__user_asked(user_id)
 
-    def add_project(self, user_id: int, name: str, model_id: int, mimetype: str, file: bytes) -> None:
-        project = Project(user_id=user_id, name=name, model_id= model_id, mimetype=mimetype, file=file)
+    def add_project(self, user_id: int, name: str, system_name: str, model_id: int, mimetype: str, file: bytes, prompt: str) -> None:
+        project_llm_id = self.__create_project_llm_and_get_new_id(system_name=system_name,llm_id=model_id, prompt=prompt)
+        project = Project(user_id=user_id, name=name, model_id=project_llm_id, mimetype=mimetype, file=file)
         with self.__create_session() as session:
             session.add(project)
             session.commit()
 
-    # def add_result_data(self, project_id: int, data:str) -> None:
-    #     result_data = ResultData(project_id=project_id, data=data)
-    #     with self.__create_session() as session:
-    #         session.add(result_data)
-    #         session.commit()
+    def __create_project_llm_and_get_new_id(self, system_name: str, llm_id: int, prompt: str):
+        project_llm = ProjectLLM(model_id=llm_id, system_name=system_name, prompt=prompt)
+        with self.__create_session() as session:
+            session.add(project_llm)
+            session.commit()
+            return project_llm.id
+
+    def add_result_data(self, project_id: int, data: str) -> None:
+        result_data = ResultData(project_id=project_id, data=data)
+        with self.__create_session() as session:
+            session.add(result_data)
+            session.commit()
 
     def update_default_model(self, user_id: int, new_default_model_id: int) -> None:
         with self.__create_session() as session:
@@ -219,12 +234,12 @@ class DBHelper:
                         model.is_default = True
                 session.commit()
 
-    def update_plan(self, user_id: int, plan_id: int) -> None:
+    def update_plan(self, user_id: int, plan: SubscriptionLevelEnum) -> None:
         with self.__create_session() as session:
             user = session.get(User, user_id)
-            subscription = session.get(SubscriptionType, plan_id)
+            subscription = session.query(SubscriptionType).filter(SubscriptionType.name == plan).first()
             if user is not None and subscription is not None:
-                user.subscription_id = plan_id
+                user.subscription_id = subscription.id
                 session.commit()
 
     def update_limits(self, plan: SubscriptionLevelEnum, new_limit: int) -> None:
@@ -294,9 +309,11 @@ class DBHelper:
                 result = 0
         return result
 
-    def get_user_subscribe_level(self, user_id: int) -> SubscriptionLevelEnum | None:
+    def get_user_subscribe_level(self, user_id: int) -> str | None:
         with self.__create_session() as session:
             user = session.get(User, user_id)
             if user is not None:
-                return user.subscription_type.name
+                return user.subscription_type.name.value
         return None
+
+
