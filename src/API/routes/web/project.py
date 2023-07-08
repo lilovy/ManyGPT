@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, Request, status, Query
+from fastapi.responses import FileResponse
 
 from ....core.llms import LLMs
-from ...models.project import UserProject, NewUserProject
+from ...models.project import UserProject, NewUserProject, Projects
+from ...models.count import Count
+from ...models.responses import ResponseStatus
 from ...dependencies.dependencies import *
 from ....database.db import DBHelper
 
@@ -9,7 +12,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/project", tags=["project"])
 
 
-@router.get("/count")
+@router.get("/count", response_model=Count, status_code=200)
 async def get_count_projects(
     request: Request,
     db: DBHelper = Depends(get_db),
@@ -21,13 +24,14 @@ async def get_count_projects(
     count = db.get_project_count(
         user_id,
     )
-    return {
-        "user_id": user_id,
-        "projects": count,
-    }
+    return Count(
+        user_id=user_id,
+        object="projects",
+        count=count,
+    )
 
 
-@router.get("/all")
+@router.get("/all", response_model=list[Projects], status_code=200)
 async def get_user_projects(
     request: Request,
     offset: int = Query (0, ge=0),
@@ -42,10 +46,10 @@ async def get_user_projects(
 
     project = {"user_id": 123, "name": "pj2", "file": "cats.png"}
 
-    return projects
+    return [Projects(**project) for project in projects]
 
 
-@router.get("/file")
+@router.get("/file", response_class=FileResponse)
 async def get_user_project_file(
     request: Request,
     project: UserProject,
@@ -61,6 +65,8 @@ async def get_user_project_file(
     content = db.get_user_data_files(
         project.project_id,
     )
+    content = "\n".join(content)
+
     return Response(
         content=content,
         media_type="text/plain",
@@ -70,7 +76,7 @@ async def get_user_project_file(
     )
 
 
-@router.post("/new")
+@router.post("/new", responses={201: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def add_user_project(
     request: Request,
     project: NewUserProject,

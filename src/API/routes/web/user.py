@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Body, Depends, status, HTTPException, Request
 from pydantic import BaseModel, ConstrainedInt
 
-from ...models.user import User, ChangeDefaultModel, ChangeUserPlan
+from ...models.user import User, ChangeDefaultModel, ChangeUserPlan, UserOutput
+from ...models.responses import ResponseStatus
 from ...dependencies.dependencies import * 
 from ...middleware import middleware
 
@@ -12,7 +13,7 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.get("/")
+@router.get("/", response_model=UserOutput, status_code=200, responses={401: {"model": ResponseStatus}})
 async def get_user(
     request: Request,
     db: DBHelper = Depends(get_db),
@@ -23,9 +24,9 @@ async def get_user(
     user_id = request.state.auth.get("user_id")
     user = db.get_user(user_id)
 
-    return user
+    return UserOutput(**user)
 
-@router.put("/default_model")
+@router.put("/default_model", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_model(
     request: Request,
     model: ChangeDefaultModel,
@@ -44,7 +45,7 @@ async def change_model(
     return {"status": status.HTTP_200_OK}
 
 
-@router.put("/plan")
+@router.put("/plan", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_plan(
     request: Request,
     plan: ChangeUserPlan,

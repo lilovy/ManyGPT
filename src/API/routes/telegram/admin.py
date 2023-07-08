@@ -3,6 +3,7 @@ from fastapi.exceptions import HTTPException
 
 from ...models.user import ChangeUserPlan
 from ...models.subscription import Subscription
+from ...models.responses import ResponseStatus
 from ...dependencies.dependencies import get_db
 from ...middleware import middleware
 
@@ -12,7 +13,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-@router.post("/limits")
+@router.post("/limits", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_limits(
     token: str,
     plan: Subscription,
@@ -30,7 +31,7 @@ async def change_limits(
     return {"status": status.HTTP_200_OK}
 
 
-@router.post("/access")
+@router.post("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def give_access(
     token: str,
     plan: ChangeUserPlan,

@@ -21,45 +21,58 @@ async def ask_ws(
     while True:
         content = await ws.receive_json()
         message = Message(**content)
-        msg = llm.ask(
-            message.request,
-            message.model,
-            flush=True,
-            )
-        full_response = ""
-        for chunk in msg:
-            full_response += chunk
-            await websocket.send_text(chunk)
 
-        db.add_message(
-            message.convo_id,
-            message.request,
-            full_response,
+        access = db.can_user_ask_question(
+            message.user_id,
         )
 
-        await websocket.send_text("<br><br>")
+        if access:
+            msg = llm.ask(
+                message.request,
+                message.model,
+                flush=True,
+                )
+
+            full_response = ""
+            for chunk in msg:
+                full_response += chunk
+                await websocket.send_text(chunk)
+
+            db.add_message(
+                message.convo_id,
+                message.request,
+                full_response,
+            )
+
+            await websocket.send_text("<br><br>")
+        
 
 
 @router.post("/ask")
 async def ask(
-    request: Request,
+    # request: Request,
     message: Message,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
 ):
 
-    content = llm.ask(
-        message.request,
-        message.model,
+    access = db.can_user_ask_question(
+        message.user_id,
     )
 
-    for response in content:
-        pass
-    
-    db.add_message(
-        message.convo_id,
-        message.request,
-        response,
-    )
-    
-    return MessageFull(**message, response=response)
+    if access:
+        content = llm.ask(
+            message.request,
+            message.model,
+        )
+
+        for response in content:
+            pass
+
+        db.add_message(
+            message.convo_id,
+            message.request,
+            response,
+        )
+
+        return MessageFull(**message, response=response)

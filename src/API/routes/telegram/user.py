@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 
-from ...models.user import User, ChangeDefaultModel, ChangeUserPlan
+from ...models.user import User, ChangeDefaultModel, ChangeUserPlan, UserOutput
+from ...models.responses import ResponseStatus
 from ...dependencies.dependencies import *
 
 from ....database.db import DBHelper
@@ -9,7 +10,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.get("/")
+@router.get("/", response_model=UserOutput, status_code=200, responses={401: {"model": ResponseStatus}})
 async def get_user(
     user: User,
     db: DBHelper = Depends(get_db),
@@ -18,9 +19,9 @@ async def get_user(
     user = db.get_user(user.user_id)
     if not user:
         return {"status": status.HTTP_401_UNAUTHORIZED}
-    return user
+    return UserOutput(**user)
 
-@router.put("/default_model")
+@router.put("/default_model", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_model(
     change_model: ChangeDefaultModel,
     db: DBHelper = Depends(get_db),
@@ -31,7 +32,7 @@ async def change_model(
     )
     return {"status": status.HTTP_200_OK}
 
-@router.post("/plan")
+@router.put("/plan", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_plan(
     plan: ChangeUserPlan,
     db: DBHelper = Depends(get_db),

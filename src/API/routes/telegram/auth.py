@@ -9,7 +9,7 @@ from ....database.db import DBHelper
 
 router = APIRouter(prefix="/auth", tags=["login"])
 
-@router.post("/login")
+@router.post("/login", status_code=201)
 async def login(
     user: User,
     db: DBHelper = Depends(get_db),
@@ -20,4 +20,4 @@ async def login(
         user.username,
         )
 
-    return {"status": status.HTTP_201_CREATED}
+    return {},  201

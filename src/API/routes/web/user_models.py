@@ -2,7 +2,9 @@ from fastapi import APIRouter, Depends, Request, status, Query
 from fastapi.exceptions import HTTPException
 
 from ....core.llms import LLMs
-from ...models.model import UserModel
+from ...models.model import UserModel, UserModelOutput
+from ...models.responses import ResponseStatus
+from ...models.count import Count
 from ...dependencies.dependencies import *
 
 from ....database.db import DBHelper
@@ -11,7 +13,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/models", tags=["models"])
 
 
-@router.get("/count")
+@router.get("/count", response_model=Count, status_code=200)
 async def get_count_models(
     request: Request,
     db: DBHelper = Depends(get_db),
@@ -23,13 +25,14 @@ async def get_count_models(
     count = db.get_model_count(
         user_id,
     )
-    return {
-        "user_id": user_id,
-        "models": count,
-    }
+    return Count(
+        user_id=user_id,
+        object="models",
+        count=count,
+    ) 
 
 
-@router.get("/")
+@router.get("/", response_model=list[UserModelOutput], status_code=200, responses={401: {"model": ResponseStatus}})
 async def get_user_models(
     request: Request,
     offset: int = Query (0, ge=0),
@@ -42,9 +45,9 @@ async def get_user_models(
 
     user_id = user.get("user_id")
     user_models = db.get_user_models(user_id, offset, limit)
-    return user_models
+    return [UserModelOutput(**models) for models in user_models]
 
-@router.post("/new")
+@router.post("/new", responses={201: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def add_user_model(
     request: Request,
     model: UserModel,

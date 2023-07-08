@@ -1,6 +1,8 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 
-from ...models.conversation import Conversation, NewConversation, Msg, Bot
+from ...models.conversation import Conversation, NewConversation, Msg, Bot, ConversationOutput, Messages
+from ...models.responses import ResponseStatus
+from ...models.count import Count
 from ....core.llms import LLMs
 from ...dependencies.dependencies import *
 from ....database.db import DBHelper
@@ -9,7 +11,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/conversation", tags=["conversation"])
 
 
-@router.get("/count")
+@router.get("/count", response_model=Count, status_code=200)
 async def get_count_msg(
     msg: Conversation,
     db: DBHelper = Depends(get_db),
@@ -19,13 +21,14 @@ async def get_count_msg(
         msg.convo_id,
     )
 
-    return {
-        "user_id": user_id,
-        "messages": count,
-    }
+    return Count(
+        user_id=user_id,
+        object="messages",
+        count=count,
+    )
 
 
-@router.get("/")
+@router.get("/", response_model=list[Messages], status_code=200)
 async def get_conversation(
     conversation: Conversation,
     offset: int = Query (0, ge=0),
@@ -39,13 +42,12 @@ async def get_conversation(
         limit
     )
 
-    return content
+    return [Messages(**msg) for msg in content]
 
 
-@router.get("/all")
+@router.get("/all", response_model=list[ConversationOutput], status_code=200)
 async def get_conversations(
     user_id: int,
-    conversation: Conversation,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
     db: DBHelper = Depends(get_db),
@@ -56,10 +58,10 @@ async def get_conversations(
         limit
     )
 
-    return content
+    return [ConversationOutput(**convo) for convo in content]
 
 
-@router.get("/all/count")
+@router.get("/all/count", response_model=Count, status_code=200)
 async def get_count_conversations(
     user_id: int,
     db: DBHelper = Depends(get_db),
@@ -68,13 +70,14 @@ async def get_count_conversations(
         user_id,
     )
 
-    return {
-        "user_id": user_id,
-        "conversations": count,
-    }
+    return Count(
+        user_id=user_id,
+        object="conversations",
+        count=count,
+    )
 
 
-@router.post("new")
+@router.post("/new", responses={201: {"model": ResponseStatus}})
 async def add_conversation(
     conversation: NewConversation,
     db: DBHelper = Depends(get_db),
@@ -85,10 +88,10 @@ async def add_conversation(
         conversation.model_id,
     )
 
-    return {"status": status.HTTP_201_CREATED}
+    return ResponseStatus(status=status.HTTP_201_CREATED)
 
 
-@router.post("/new/bot")
+@router.post("/new/bot", responses={201: {"model": ResponseStatus}})
 async def add_bot(
     bot: Bot,
     db: DBHelper = Depends(get_db),
@@ -108,19 +111,26 @@ async def add_bot(
         bot.prompt,
     )
 
-    return {"status": status.HTTP_201_CREATED}
+    return ResponseStatus(status=status.HTTP_201_CREATED)
 
 
-@router.post("msg")
-async def add_msg(
-    msg: Msg,
-    db: DBHelper = Depends(get_db),
-):
+# @router.post("msg")
+# async def add_msg(
+#     msg: Msg,
+#     db: DBHelper = Depends(get_db),
+# ):
 
-    db.add_message(
-        msg.convo_id,
-        msg.question,
-        msg.answer,
-    )
+#     access = db.can_user_ask_question(
+#         msg.user_id,
+#     )
 
-    return {"status": status.HTTP_201_CREATED}
+#     if access:
+#         db.add_message(
+#             msg.convo_id,
+#             msg.question,
+#             msg.answer,
+#         )
+#         return {"status": status.HTTP_201_CREATED}
+#     return {"status": "no tokens"}
+
+
