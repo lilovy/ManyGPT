@@ -3,7 +3,7 @@ from typing import Any
 
 import sqlalchemy
 from sqlalchemy.orm import DeclarativeBase, relationship, sessionmaker
-from sqlalchemy import Column, Integer, Identity, ForeignKey, DateTime, String, Text, Boolean, Enum, BLOB
+from sqlalchemy import Column, Integer, Identity, ForeignKey, DateTime, String, Text, Boolean, Enum, BLOB, LargeBinary
 from src.database.model.enums import *
 
 
@@ -119,7 +119,7 @@ class Project(Base):
     model_id = Column(Integer, ForeignKey("ProjectLLMs.id"))
     name = Column(String)
     mimetype = Column(String)
-    file = Column(BLOB)
+    file = Column(LargeBinary)
 
     user = relationship("User", back_populates="project")
     file_part = relationship("FilePart", back_populates="project")
