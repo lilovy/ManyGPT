@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, status, Query, BackgroundTasks
+from fastapi import APIRouter, Depends, Request, status, Query
 from fastapi.exceptions import HTTPException
 from typing import List
 
@@ -50,7 +50,6 @@ async def add_user_model(
     name: str,
     system_name: str,
     prompt: str,
-    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
     ):
@@ -66,21 +65,11 @@ async def add_user_model(
         base_model,
     )
 
-    background_task.add_task(
-        db.add_user_model,
-        dict(
-            user_id=user_id,
-            name=name,
-            system_name=system_name,
-            base_model_id=base_model_id,
-            prompt=prompt,
-        ),
+    db.add_user_model(
+        user_id,
+        name,
+        system_name,
+        base_model_id,
+        prompt,
     )
-    # db.add_user_model(
-    #     user_id,
-    #     name,
-    #     system_name,
-    #     base_model_id,
-    #     prompt,
-    # )
     return {"status": status.HTTP_201_CREATED}

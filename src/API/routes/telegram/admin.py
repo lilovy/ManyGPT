@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, status, Response, BackgroundTasks
+from fastapi import APIRouter, Depends, Request, status, Response
 from fastapi.exceptions import HTTPException
 from datetime import datetime
 
@@ -22,7 +22,6 @@ async def change_limits(
     # plan: Subscription,
     # name: str,
     limit: str,
-    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
     ):
     # payload = middleware.decode_token(token)
@@ -30,7 +29,6 @@ async def change_limits(
 
     # if not payload_secret or payload_secret == status.HTTP_401_UNAUTHORIZED:
     #     return payload_secret
-    background_task.add_task(db.update_limits, new_limit=limit)
     db.update_limits(
         # name,
         limit,
@@ -44,7 +42,6 @@ async def give_access(
     # plan: ChangeUserPlan,
     user_id: int,
     plan: str,
-    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
     ):
     # payload = middleware.decode_token(token)
@@ -52,10 +49,10 @@ async def give_access(
 
     # if not payload_secret or payload_secret == status.HTTP_401_UNAUTHORIZED:
     #     return payload_secret
-    background_task.add_task(db.update_plan, user_id=user_id, plan=plan)
+
     db.update_plan(
-        user_id,
-        plan,
+        plan.user_id,
+        plan.plan,
     )
     return {"status": status.HTTP_200_OK}
 

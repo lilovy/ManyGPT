@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, status, BackgroundTasks
+from fastapi import Depends, APIRouter, status
 from pydantic import ValidationError
 
 from .user import User
@@ -15,14 +15,12 @@ async def login(
     # user: User,
     user_id: int,
     username: str,
-    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
     ):
 
-    background_task.add_task(db.add_user, user_id=user_id, username=username)
-    # db.add_user(
-    #     user_id,
-    #     username,
-    #     )
+    db.add_user(
+        user_id,
+        username,
+        )
 
     return {}, 201
