@@ -247,14 +247,14 @@ class DBHelper:
     def update_plan(self, user_id: int, plan: str) -> None:
         with self.__create_session() as session:
             user = session.get(User, user_id)
-            subscription = session.query(SubscriptionType).filter(SubscriptionType.name.value == plan).first()
+            subscription = session.query(SubscriptionType).filter(SubscriptionType.name == plan).first()
             if user is not None and subscription is not None:
                 user.subscription_id = subscription.id
                 session.commit()
 
     def update_limits(self, plan: str, new_limit: int) -> None:
         with self.__create_session() as session:
-            subscription = session.query(SubscriptionType).filter(SubscriptionType.name.value == plan).first()
+            subscription = session.query(SubscriptionType).filter(SubscriptionType.name == plan).first()
             if subscription is not None:
                 subscription.limit = new_limit
                 session.commit()
