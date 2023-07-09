@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, Request, Response
-# import uvicorn
+import uvicorn
 
 from src.API.routes.web import (
     user as web_user,
