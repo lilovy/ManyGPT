@@ -90,9 +90,9 @@ async def add_user_project(
         mimetype=project.file.content_type,
         model_id=project.model_id,
         prompt=project.prompt,
-        system_name=project.
+        system_name=project.system_name,
         file=await project.file.read(),
     )
-    
+
     return {"status": status.HTTP_201_CREATED}
 

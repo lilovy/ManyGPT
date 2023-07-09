@@ -10,6 +10,7 @@ class NewUserProject(BaseModel):
     user_id: int
     name: str
     mimetype: str
+    system_name: str
     model_id: int
     model: str
     prompt: str
