@@ -16,7 +16,9 @@ router = APIRouter(prefix="/admin", tags=["admin"])
 @router.post("/limits", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_limits(
     token: str,
-    plan: Subscription,
+    # plan: Subscription,
+    name: str,
+    limit: str,
     db: DBHelper = Depends(get_db),
     ):
     payload = middleware.decode_token(token)
@@ -25,8 +27,8 @@ async def change_limits(
     if not payload_secret or payload_secret == status.HTTP_401_UNAUTHORIZED:
         return payload_secret
     db.update_limits(
-        plan.name,
-        plan.limit,
+        name,
+        limit,
     )
     return {"status": status.HTTP_200_OK}
 
@@ -34,7 +36,9 @@ async def change_limits(
 @router.post("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def give_access(
     token: str,
-    plan: ChangeUserPlan,
+    # plan: ChangeUserPlan,
+    user_id: int,
+    plan: str,
     db: DBHelper = Depends(get_db),
     ):
     payload = middleware.decode_token(token)

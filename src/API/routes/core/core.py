@@ -52,27 +52,31 @@ async def ask_ws(
 @router.post("/ask", response_model=MessageFull, status_code=200, responses={404: {"model": ResponseStatus}})
 async def ask(
     # request: Request,
-    message: Message,
+    # message: Message,
+    user_id: int,
+    model: str,
+    convo_id: int,
+    request: str,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
 ):
 
     access = db.can_user_ask_question(
-        message.user_id,
+        user_id,
     )
 
     if access:
         content = llm.ask(
-            message.request,
-            message.model,
+            request,
+            model,
         )
 
         for response in content:
             pass
 
         db.add_message(
-            message.convo_id,
-            message.request,
+            convo_id,
+            request,
             response,
         )
 

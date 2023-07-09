@@ -14,12 +14,14 @@ router = APIRouter(prefix="/conversation", tags=["conversation"])
 
 @router.get("/count", response_model=Count, status_code=200)
 async def get_count_msg(
-    msg: Conversation,
+    # msg: Conversation,
+    user_id: int,
+    convo_id: int,
     db: DBHelper = Depends(get_db),
 ):
     count = db.get_message_count(
         # msg.user_id,
-        msg.convo_id,
+        convo_id,
     )
 
     return Count(
@@ -31,14 +33,15 @@ async def get_count_msg(
 
 @router.get("/", response_model=List[Messages], status_code=200)
 async def get_conversation(
-    conversation: Conversation,
+    # conversation: Conversation,
+    convo_id: int,
     offset: int = Query (0, ge=0),
     limit: int = Query(10, ge=1),
     db: DBHelper = Depends(get_db),
 ):
 
     content = db.get_user_msg_history(
-        conversation.convo_id,
+        convo_id,
         offset,
         limit
     )
@@ -80,13 +83,16 @@ async def get_count_conversations(
 
 @router.post("/new", responses={201: {"model": ResponseStatus}})
 async def add_conversation(
-    conversation: NewConversation,
+    # conversation: NewConversation,
+    user_id: int,
+    model_id: int,
+    name: str,
     db: DBHelper = Depends(get_db),
 ):
     db.add_chat(
-        conversation.user_id,
-        conversation.name,
-        conversation.model_id,
+        user_id,
+        name,
+        model_id,
     )
 
     return ResponseStatus(status=status.HTTP_201_CREATED)
@@ -94,22 +100,28 @@ async def add_conversation(
 
 @router.post("/new/bot", responses={201: {"model": ResponseStatus}})
 async def add_bot(
-    bot: Bot,
+    # bot: Bot,
+    user_id: int,
+    name: str,
+    system_name: str,
+    model_id: int,
+    model: str,
+    prompt: str,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
 ):
     llm.new_bot(
-        bot.name,
-        bot.prompt,
-        bot.model,
+        name,
+        prompt,
+        model,
     )
 
     db.add_user_model(
-        bot.user_id,
-        bot.name,
-        bot.system_name,
-        bot.model_id,
-        bot.prompt,
+        user_id,
+        name,
+        system_name,
+        model_id,
+        prompt,
     )
 
     return ResponseStatus(status=status.HTTP_201_CREATED)

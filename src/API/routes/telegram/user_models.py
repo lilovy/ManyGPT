@@ -44,27 +44,32 @@ async def get_user_models(
 
 @router.post("/new", responses={201: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def add_user_model(
-    model: UserModel,
+    # model: UserModel,
+    user_id: int,
+    base_model_id: int,
+    name: str,
+    system_name: str,
+    prompt: str,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
     ):
-    if not db.get_user(model.user_id):
+    if not db.get_user(user_id):
         return {"status": status.HTTP_401_UNAUTHORIZED}
     user_id = user.get("user_id")
 
-    base_model = db.get_base_model(model.base_model_id)
+    base_model = db.get_base_model(base_model_id)
 
     llm.new_bot(
-        model.system_name,
-        model.prompt,
+        system_name,
+        prompt,
         base_model,
     )
 
     db.add_user_model(
-        model.user_id,
-        model.name,
-        model.system_name,
-        model.base_model_id,
-        model.prompt,
+        user_id,
+        name,
+        system_name,
+        base_model_id,
+        prompt,
     )
     return {"status": status.HTTP_201_CREATED}

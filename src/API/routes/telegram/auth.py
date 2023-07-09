@@ -18,12 +18,9 @@ async def login(
     db: DBHelper = Depends(get_db),
     ):
 
-    try:
-        db.add_user(
-            user_id,
-            username,
-            )
+    db.add_user(
+        user_id,
+        username,
+        )
 
-        return {}, 201
-    except ValidationError as e:
-        return e.json(), 422
+    return {}, 201
