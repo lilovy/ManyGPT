@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, status, Query
+from fastapi import APIRouter, Depends, Request, status, Query, BackgroundTasks
 from typing import List
 
 from ...models.conversation import Conversation, NewConversation, Msg, Bot, ConversationOutput, Messages
@@ -87,13 +87,21 @@ async def add_conversation(
     user_id: int,
     model_id: int,
     name: str,
+    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
 ):
-    db.add_chat(
-        user_id,
-        name,
-        model_id,
-    )
+    background_task.add_task(
+        db.add_chat,
+        dict(
+            user_id=user_id,
+            name=name,
+            user_model_id=model_id,
+        ))
+    # db.add_chat(
+    #     user_id,
+    #     name,
+    #     model_id,
+    # )
 
     return ResponseStatus(status=status.HTTP_201_CREATED)
 
@@ -107,6 +115,7 @@ async def add_bot(
     model_id: int,
     # model: str,
     prompt: str,
+    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
 ):
@@ -119,13 +128,22 @@ async def add_bot(
     )
     
 
-    db.add_user_model(
-        user_id,
-        name,
-        system_name,
-        model_id,
-        prompt,
-    )
+    background_task.add_task(
+        db.add_user_model,
+        dict(
+            user_id=user_id,
+            name=name,
+            system_name=system_name,
+            base_model_id=model_id,
+            prompt=prompt,
+        ))
+    # db.add_user_model(
+    #     user_id,
+    #     name,
+    #     system_name,
+    #     model_id,
+    #     prompt,
+    # )
 
     return ResponseStatus(status=status.HTTP_201_CREATED)
 

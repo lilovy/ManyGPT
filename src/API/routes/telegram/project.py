@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, status, Query, Response, UploadFile
+from fastapi import APIRouter, Depends, Request, status, Query, Response, UploadFile, BackgroundTasks
 from fastapi.responses import FileResponse
 from typing import List
 from io import BytesIO
@@ -84,6 +84,7 @@ async def add_user_project(
     model_id: int,
     prompt: str,
     file: UploadFile,
+    background_task: BackgroundTasks,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
     ):
@@ -96,15 +97,27 @@ async def add_user_project(
         base_model,
     )
 
-    db.add_project(
-        user_id=user_id,
-        name=name,
-        mimetype=file.content_type,
-        model_id=model_id,
-        prompt=prompt,
-        system_name=system_name,
-        file=await file.read(),
+    background_task.add_task(
+        db.add_project,
+        dict(
+            user_id=user_id,
+            name=name,
+            mimetype=file.content_type,
+            model_id=model_id,
+            prompt=prompt,
+            system_name=system_name,
+            file=await file.read(),
+        )
     )
+    # db.add_project(
+    #     user_id=user_id,
+    #     name=name,
+    #     mimetype=file.content_type,
+    #     model_id=model_id,
+    #     prompt=prompt,
+    #     system_name=system_name,
+    #     file=await file.read(),
+    # )
 
     return {"status": status.HTTP_201_CREATED}
 
