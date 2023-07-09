@@ -40,7 +40,7 @@ async def get_user_models(
     if not user:
         return {"status": status.HTTP_401_UNAUTHORIZED}
     user_models = db.get_user_models(user_id, offset, limit)
-    return [UserModelOutput(**models) for models in user_models]
+    return [models for models in user_models]
 
 @router.post("/new")
 async def add_user_model(
