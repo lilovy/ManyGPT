@@ -44,13 +44,14 @@ async def get_user_projects(
 @router.get("/file", response_class=FileResponse)
 async def get_user_project(
     project_id: int,
-    name: str,
     db: DBHelper = Depends(get_db),
     ):
     content = db.get_user_data_files(
         project_id,
     )
     content = "\n".join(content)
+    
+    name = db.get_project_name(project_id)
 
     return Response(
         content=content,
