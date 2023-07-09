@@ -212,7 +212,6 @@ class DBHelper:
             new_chat_id = chat.id
         self.__change_curr_convo(user_id, new_chat_id)
 
-
     def __change_curr_convo(self, user_id: int, convo_id : int):
         with self.__create_session() as session:
             currconvo = session.query(CurrConvo).filter(CurrConvo.user_id == user_id).first()
@@ -278,9 +277,9 @@ class DBHelper:
                 user.subscription_id = subscription.id
                 session.commit()
 
-    def update_limits(self, plan: str, new_limit: int) -> None:
+    def update_limits(self,  new_limit: int) -> None:
         with self.__create_session() as session:
-            subscription = session.query(SubscriptionType).filter(SubscriptionType.name == plan).first()
+            subscription = session.query(SubscriptionType).filter(SubscriptionType.name == "free").first()
             if subscription is not None:
                 subscription.limit = new_limit
                 session.commit()
@@ -417,3 +416,11 @@ class DBHelper:
                 return None
             else:
                 return currconvo.convo_id
+
+    def get_subs(self) -> list[dict]:
+        result = []
+        with self.__create_session() as session:
+            subscriptions = session.query(SubscriptionType).all()
+            for sub in subscriptions:
+                result.append(sub.get_simple_dict())
+        return result
