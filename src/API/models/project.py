@@ -12,7 +12,7 @@ class NewUserProject(BaseModel):
     mimetype: str
     system_name: str
     model_id: int
-    model: str
+    # model: str
     prompt: str
     file: UploadFile
 

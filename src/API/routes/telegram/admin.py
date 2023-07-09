@@ -51,5 +51,7 @@ async def give_access(
 
 
 @router.get("/stats")
-async def view_stats():
+async def view_stats(
+    db: DBHelper = Depends(get_db),
+):
     ...
