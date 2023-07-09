@@ -152,3 +152,6 @@ cython_debug/
 #.idea/
 
 *.xml
+
+
+/src/database/multigpt.db
