@@ -113,7 +113,7 @@ async def add_bot(
     model = db.get_base_model(model_id)
 
     llm.new_bot(
-        name,
+        system_name,
         prompt,
         model,
     )
