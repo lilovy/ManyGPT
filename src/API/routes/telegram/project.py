@@ -27,7 +27,7 @@ async def get_count_projects(
     )
 
 
-@router.get("/all", response_model=List[Projects], status_code=200)
+@router.get("/all", status_code=200)
 async def get_user_projects(
     user_id: int,
     offset: int = Query (0, ge=0),
