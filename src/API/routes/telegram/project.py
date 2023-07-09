@@ -37,7 +37,8 @@ async def get_user_projects(
 
     projects = db.get_user_projects(user_id, offset, limit)
 
-    return [Projects(**project) for project in projects]
+    # return [Projects(**project) for project in projects]
+    return projects
 
 
 @router.get("/file", response_class=FileResponse)
