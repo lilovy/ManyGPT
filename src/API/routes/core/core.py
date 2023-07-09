@@ -1,6 +1,8 @@
 from fastapi import APIRouter, WebSocket, Depends, Request
+from typing import List
 
 from ...models.message import Message, MessageFull
+from ...models.model import ModelBase
 from ...models.responses import ResponseStatus
 
 from ....core.llms import LLMs
@@ -29,7 +31,7 @@ async def ask_ws(
 
         if access:
             msg = llm.ask(
-                message.request,
+                message.request,  
                 message.model,
                 flush=True,
                 )
@@ -82,3 +84,12 @@ async def ask(
 
         return MessageFull(**message, response=response)
     return {"status": "No token"}
+
+
+@router.get("/base_models", response_model=List[ModelBase])
+async def ask(
+    db: DBHelper = Depends(get_db),
+):
+    base_models = db.get_base_model()
+
+    return base_models
