@@ -60,4 +60,60 @@ async def give_access(
 async def get_all_users(
     db: DBHelper = Depends(get_db),
 ):
-    ...
+    user_count = db.get_user_count_for_statistic()
+    
+
+    content = bar_chart(user_count, dict(x="Plan", y="Users"))
+    name = datetime.now()
+
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
+
+
+@router.get("/stats/growth")
+async def get_user_growth(
+    period: int = 7,
+    plan: str = None,
+    db: DBHelper = Depends(get_db),
+):
+    user_growth = db.user_growth(period=period, plan=plan)
+    
+    content = bar_chart(user_growth, dict(x="Date", y="New users"))
+    
+    name = datetime.now()
+
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
+
+
+@router.get("/stats/interaction")
+async def get_user_interaction(
+    period: int = 7,
+    db: DBHelper = Depends(get_db),
+):
+    amount_of_interaction = db.amount_of_interaction(period=period)
+
+    content = bar_chart(amount_of_interaction, dict(x="Date", y="New messages"))
+
+    name = datetime.now()
+
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
