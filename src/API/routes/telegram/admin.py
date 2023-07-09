@@ -71,8 +71,8 @@ async def get_all_users(
         content=content,
         media_type="image/png",
         headers={
-            "Content-Disposition": f"attachment; filename={name}.txt",
-            "filename": f"{name}.txt",
+            "Content-Disposition": f"attachment; filename={name}.png",
+            "filename": f"{name}.png",
         }
     )
 
@@ -93,8 +93,8 @@ async def get_user_growth(
         content=content,
         media_type="image/png",
         headers={
-            "Content-Disposition": f"attachment; filename={name}.txt",
-            "filename": f"{name}.txt",
+            "Content-Disposition": f"attachment; filename={name}.png",
+            "filename": f"{name}.png",
         }
     )
 
@@ -114,7 +114,7 @@ async def get_user_interaction(
         content=content,
         media_type="image/png",
         headers={
-            "Content-Disposition": f"attachment; filename={name}.txt",
-            "filename": f"{name}.txt",
+            "Content-Disposition": f"attachment; filename={name}.png",
+            "filename": f"{name}.png",
         }
     )
