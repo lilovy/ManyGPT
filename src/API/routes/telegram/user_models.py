@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 from fastapi.exceptions import HTTPException
+from typing import List
 
 from ....core.llms import LLMs
 from ...models.model import UserModel, UserModelOutput
@@ -28,7 +29,7 @@ async def get_count_models(
     )
 
 
-@router.get("/", response_model=list[UserModelOutput], status_code=200, responses={401: {"model": ResponseStatus}})
+@router.get("/", response_model=List[UserModelOutput], status_code=200, responses={401: {"model": ResponseStatus}})
 async def get_user_models(
     user_id: int,
     offset: int = Query (0, ge=0),

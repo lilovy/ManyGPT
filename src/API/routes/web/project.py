@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Query
 from fastapi.responses import FileResponse
+from typing import List
 
 from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject, Projects
@@ -32,7 +33,7 @@ async def get_count_projects(
     )
 
 
-@router.get("/all", response_model=list[Projects], status_code=200)
+@router.get("/all", response_model=List[Projects], status_code=200)
 async def get_user_projects(
     request: Request,
     offset: int = Query (0, ge=0),

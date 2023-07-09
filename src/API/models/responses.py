@@ -1,5 +1,6 @@
 from pydantic import BaseModel
+from typing import Union
 
 
 class ResponseStatus(BaseModel):
-    status: int | str
+    status: Union[int, str]
