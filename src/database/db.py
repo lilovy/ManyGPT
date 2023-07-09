@@ -382,3 +382,13 @@ class DBHelper:
         with self.__create_session() as session:
             project = session.get(Project, project_id)
             return project.name
+
+    def get_conversation_model(self, convo_id: int) -> str | None:
+        with self.__create_session() as session:
+            conv = session.get(Conversation, convo_id)
+            if conv is None:
+                return None
+            elif conv.user_llm is None:
+                return None
+            else:
+                return conv.user_llm.system_name
