@@ -15,7 +15,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/project", tags=["project"])
 
 
-@router.get("/count", response_model=Count, status_code=200)
+@router.get("/count", status_code=200)
 async def get_count_projects(
     user_id: int,
     db: DBHelper = Depends(get_db),

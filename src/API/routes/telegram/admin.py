@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, Request, status
+from fastapi import APIRouter, Depends, Request, status, Response
 from fastapi.exceptions import HTTPException
 
 from ...models.user import ChangeUserPlan
 from ...models.subscription import Subscription
 from ...models.responses import ResponseStatus
 from ...dependencies.dependencies import get_db
+from ....core.graphs import bar_chart
 from ...middleware import middleware
 
 from ....database.db import DBHelper
@@ -58,5 +59,16 @@ async def give_access(
 async def view_stats(
     db: DBHelper = Depends(get_db),
 ):
-    users_count = db.get_user_count_for_statistic()
-    
+    # users_count = db.get_user_count_for_statistic()
+
+    buff = bar_chart({"free": 3, "basic": 34, "advanced": 1})
+    name = "293r"
+
+    return Response(
+        content=buff,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
