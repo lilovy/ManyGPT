@@ -15,11 +15,19 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
+@router.get("/plans")
+async def get_plans(
+    db: DBHelper = Depends(get_db),
+):
+    plans = db.get_subs()
+    return plans
+
+
 @router.post("/limits")
 async def change_limits(
     token: str,
     # plan: Subscription,
-    name: str,
+    # name: str,
     limit: str,
     db: DBHelper = Depends(get_db),
     ):
@@ -29,7 +37,7 @@ async def change_limits(
     if not payload_secret or payload_secret == status.HTTP_401_UNAUTHORIZED:
         return payload_secret
     db.update_limits(
-        name,
+        # name,
         limit,
     )
     return {"status": status.HTTP_200_OK}
