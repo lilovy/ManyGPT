@@ -377,3 +377,8 @@ class DBHelper:
                         count += 1
                 result[some_date] = count
         return result
+
+    def get_project_name(self, project_id: int) -> str:
+        with self.__create_session() as session:
+            project = session.get(Project, project_id)
+            return project.name
