@@ -84,7 +84,7 @@ async def ask(
             response,
         )
 
-        return MessageFull(**message, response=response)
+        return {"response": response}
     return {"status": "No token"}
 
 
