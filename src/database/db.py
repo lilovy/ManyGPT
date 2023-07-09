@@ -159,7 +159,7 @@ class DBHelper:
                     llm_list.append(llm.get_simple_dict())
                 return llm_list
             else:
-                llm = session.get(LLM, model_id)
+                llm = session.query(LLM).filter(LLM.id == model_id).first()
                 if llm is not None:
                     return llm.model.value
                 else:
