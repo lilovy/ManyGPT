@@ -7,7 +7,7 @@ from sqlalchemy import Column, Integer, Identity, ForeignKey, DateTime, String, 
 from src.database.model.enums import *
 
 
-engine = sqlalchemy.create_engine('sqlite:///src/database/multigpt.db', echo=True)
+engine = sqlalchemy.create_engine('sqlite:///multigpt.db', echo=True)
 
 
 class Base(DeclarativeBase):
@@ -48,6 +48,12 @@ class FilePart(Base):
     is_used = Column(Boolean)
 
     project = relationship("Project", back_populates="file_part")
+
+    def __init__(self, part: str, project_id: int, **kw: Any):
+        super().__init__(**kw)
+        self.part = part
+        self.is_used = False
+        self.project_id = project_id
 
     def get_simple_dict(self) -> dict:
         return {
@@ -145,6 +151,12 @@ class ProjectLLM(Base):
 
     project = relationship("Project", back_populates="project_llm")
     llm = relationship("LLM", back_populates="project_llm")
+
+    def __init__(self, model_id: int, system_name: str, prompt: str, **kw: Any):
+        super().__init__(**kw)
+        self.model_id = model_id
+        self.system_name = system_name
+        self.prompt = prompt
 
     def get_simple_dict(self) -> dict:
         return {
@@ -246,9 +258,6 @@ class UserLLM(Base):
         self.system_name = system_name
         self.prompt = prompt
         self.is_default = is_default
-
-    #     def add_user_model(self, user_id: int, name: str, system_name: str, base_model_id: int, prompt: str):
-    #         pass
 
     def get_simple_dict(self) -> dict:
         return {
