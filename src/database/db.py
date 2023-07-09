@@ -5,7 +5,7 @@ import sqlalchemy
 from src.database.model.enums import *
 from sqlalchemy.orm import sessionmaker
 from src.database.model.database_elems import Base, UserToken, User, UserLLM, ProjectLLM, \
-    Project, FilePart, ResultData, SubscriptionType, Conversation, Message, LLM
+    Project, FilePart, ResultData, SubscriptionType, Conversation, Message, LLM, CurrConvo
 
 
 class DBHelper:
@@ -179,11 +179,18 @@ class DBHelper:
             limit = free_subscription.limit
             session.commit()
         self.__init_user_token(user_id=user_id, limit=limit)
+        self.__init_curr_convo(user_id)
 
     def __init_user_token(self, user_id: int, limit: int) -> None:
         user_token = UserToken(user_id=user_id, count=limit)
         with self.__create_session() as session:
             session.add(user_token)
+            session.commit()
+
+    def __init_curr_convo(self, user_id: int):
+        currconvo = CurrConvo(user_id)
+        with self.__create_session() as session:
+            session.add(currconvo)
             session.commit()
 
     def add_user_model(self, user_id: int, name: str, system_name: str, base_model_id: int, prompt: str):
@@ -198,8 +205,18 @@ class DBHelper:
 
     def add_chat(self, user_id: int, name: str, user_model_id: int) -> None:
         chat = Conversation(user_id=user_id, name=name, llm_id=user_model_id)
+        new_chat_id: int
         with self.__create_session() as session:
             session.add(chat)
+            session.commit()
+            new_chat_id = chat.id
+        self.__change_curr_convo(user_id, new_chat_id)
+
+
+    def __change_curr_convo(self, user_id: int, convo_id : int):
+        with self.__create_session() as session:
+            currconvo = session.query(CurrConvo).filter(CurrConvo.user_id == user_id).first()
+            currconvo.convo_id = convo_id
             session.commit()
 
     def add_message(self, convo_id: int, question: str, answer: str) -> None:
@@ -218,7 +235,7 @@ class DBHelper:
         with self.__create_session() as session:
             session.add(project)
             session.commit()
-            self.__add_file_parts(project_id= project.id, full_text=str(file, "utf-8"))
+            self.__add_file_parts(project_id=project.id, full_text=str(file, "utf-8"))
 
     def __create_project_llm_and_get_new_id(self, system_name: str, llm_id: int, prompt: str):
         project_llm = ProjectLLM(model_id=llm_id, system_name=system_name, prompt=prompt)
@@ -392,3 +409,11 @@ class DBHelper:
                 return None
             else:
                 return conv.user_llm.system_name
+
+    def get_curr_convo_id(self, user_id: int) -> int | None:
+        with self.__create_session() as session:
+            currconvo = session.query(CurrConvo).filter(CurrConvo.user_id == user_id).first()
+            if currconvo is None:
+                return None
+            else:
+                return currconvo.convo_id

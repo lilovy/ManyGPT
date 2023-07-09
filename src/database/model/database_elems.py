@@ -296,3 +296,18 @@ class UserToken(Base):
             "count": self.count,
             "last_update": self.last_update
         }
+
+
+class CurrConvo(Base):
+    __tablename__ = "CurrConvo"
+    id = Column(Integer, Identity(start=1, always=True), primary_key=True)
+    user_id = Column(Integer, ForeignKey("Users.id"))
+    convo_id = Column(Integer, ForeignKey("Conversations.id"))
+
+    user = relationship("User", back_populates="curr_convo")
+    conversation = relationship("Conversation", back_populates="curr_convo")
+
+    def __init__(self,  user_id: int, **kw: Any):
+        super().__init__(**kw)
+        self.user_id = user_id
+        self.convo_id = None
