@@ -59,6 +59,6 @@ async def change_plan(
         return {"status": status.HTTP_401_UNAUTHORIZED}
     db.update_plan(
         plan.user_id,
-        plan.plan_id,
+        plan.plan,
     )
     return {"status": status.HTTP_200_OK}

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Request, status, Query
+from fastapi import APIRouter, Depends, Request, status, Query, Response, UploadFile
 from fastapi.responses import FileResponse
+from typing import List
 
 from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject, Projects
@@ -26,7 +27,7 @@ async def get_count_projects(
     )
 
 
-@router.get("/all", response_model=list[Projects], status_code=200)
+@router.get("/all", response_model=List[Projects], status_code=200)
 async def get_user_projects(
     user_id: int,
     offset: int = Query (0, ge=0),
@@ -41,11 +42,12 @@ async def get_user_projects(
 
 @router.get("/file", response_class=FileResponse)
 async def get_user_project(
-    project: UserProject,
+    project_id: int,
+    name: str,
     db: DBHelper = Depends(get_db),
     ):
     content = db.get_user_data_files(
-        project.project_id,
+        project_id,
     )
     content = "\n".join(content)
 
@@ -53,7 +55,7 @@ async def get_user_project(
         content=content,
         media_type="text/plain",
         headers={
-            "Content-Disposition": f"attachment; filename={project.name}.txt"
+            "Content-Disposition": f"attachment; filename={name}.txt"
         }
     )
 
@@ -71,24 +73,34 @@ def сhecking_project_access(
 
 @router.post("/new", responses={201: {"model": ResponseStatus}})
 async def add_user_project(
-    project: NewUserProject,
+    # project: NewUserProject,
+    user_id: int,
+    name: str,
+    system_name: str,
+    model_id: int,
+    prompt: str,
+    file: UploadFile,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
     ):
+
+    base_model = db.get_base_model(model_id)
+
     llm.new_bot(
-        project.name,
-        project.prompt,
-        project.model,
+        name,
+        prompt,
+        base_model,
     )
 
     db.add_project(
-        user_id=project.user_id,
-        name=project.name,
-        mimetype=project.file.content_type,
-        model_id=project.model_id,
-        prompt=project.prompt,
-        file=await project.file.read(),
+        user_id=user_id,
+        name=name,
+        mimetype=file.content_type,
+        model_id=model_id,
+        prompt=prompt,
+        system_name=system_name,
+        file=await file.read(),
     )
-    
+
     return {"status": status.HTTP_201_CREATED}
 

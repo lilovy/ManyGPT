@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, Request, status, Query
+from fastapi import APIRouter, Depends, Request, status, Query, Response
 from fastapi.responses import FileResponse
+from typing import List
 
 from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject, Projects
@@ -32,7 +33,7 @@ async def get_count_projects(
     )
 
 
-@router.get("/all", response_model=list[Projects], status_code=200)
+@router.get("/all", response_model=List[Projects], status_code=200)
 async def get_user_projects(
     request: Request,
     offset: int = Query (0, ge=0),
@@ -110,19 +111,22 @@ async def add_user_project(
     if user_id != project.user_id:
         return {"status": status.HTTP_401_UNAUTHORIZED}
 
+    base_model = db.get_base_model(project.base_model_id)
+
     llm.new_bot(
         project.name,
         project.prompt,
-        project.model,
+        base_model,
     )
 
     db.add_project(
         user_id=project.user_id,
         name=project.name,
+        system_name=project.system_name,
         mimetype=project.mimetype,
         model_id=project.model_id,
         prompt=project.prompt,
-        file=project.file,
+        file=await project.file.read(),
     )
     
     return {"status": status.HTTP_201_CREATED}

@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, Request, status, Query
+from typing import List
 
 from ....core.llms import LLMs
 from ...models.conversation import Conversation, NewConversation, Msg, Bot, ConversationOutput, Messages
@@ -24,7 +25,7 @@ async def get_count_msg(
 
     user_id = request.state.user.get("user_id")
     count = db.get_message_count(
-        msg.user_id,
+        # msg.user_id,
         msg.convo_id,
     )
     return Count(
@@ -34,7 +35,7 @@ async def get_count_msg(
     )
 
 
-@router.get("/", response_model=list[Messages], status_code=200)
+@router.get("/", response_model=List[Messages], status_code=200)
 async def get_conversation(
     request: Request,
     conversation: Conversation,
@@ -58,7 +59,7 @@ async def get_conversation(
     return [Messages(**msg) for msg in content]
 
 
-@router.get("/all", response_model=list[ConversationOutput], status_code=200)
+@router.get("/all", response_model=List[ConversationOutput], status_code=200)
 async def get_conversations(
     request: Request,
     offset: int = Query (0, ge=0),

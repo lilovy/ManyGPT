@@ -12,33 +12,37 @@ router = APIRouter(prefix="/user", tags=["user"])
 
 @router.get("/", response_model=UserOutput, status_code=200, responses={401: {"model": ResponseStatus}})
 async def get_user(
-    user: User,
+    user_id: int,
     db: DBHelper = Depends(get_db),
     ):
 
-    user = db.get_user(user.user_id)
+    user = db.get_user(user_id)
     if not user:
         return {"status": status.HTTP_401_UNAUTHORIZED}
     return UserOutput(**user)
 
 @router.put("/default_model", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_model(
-    change_model: ChangeDefaultModel,
+    # change_model: ChangeDefaultModel,
+    user_id: int,
+    model_id: int,
     db: DBHelper = Depends(get_db),
     ):
     db.update_default_model(
-        change_model.user_id,
-        change_model.model_id,
+        user_id,
+        model_id,
     )
     return {"status": status.HTTP_200_OK}
 
 @router.put("/plan", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
 async def change_plan(
-    plan: ChangeUserPlan,
+    # plan: ChangeUserPlan,
+    user_id: int,
+    plan: str,
     db: DBHelper = Depends(get_db),
     ):
     db.update_plan(
-        plan.user_id,
-        plan.plan_id,
+        user_id,
+        plan,
     )
     return {"status": status.HTTP_200_OK}

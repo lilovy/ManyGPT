@@ -50,7 +50,7 @@ class LLMs(object):
         return bot
 
 
-def get_llm(token: str, proxy: str | None = None):
+def get_llm():
     llm = LLMs(token, proxy)
     yield llm
 
