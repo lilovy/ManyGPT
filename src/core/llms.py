@@ -2,6 +2,7 @@ import poe
 import json
 from poe import Client
 from enum import Enum
+from config import token, proxy
 
 
 class LlmModels(Enum):
