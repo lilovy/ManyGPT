@@ -12,11 +12,13 @@ from src.database.model.database_elems import Base, UserToken, User, UserLLM, Pr
 class DBHelper:
     __engine = None
 
-    def __init__(self):
-        self.__engine = sqlalchemy.create_engine('sqlite:///model/multigpt.db', echo=True)
+    def __init__(self, db_path):
+        self.__db_path = db_path
+        self.__engine = sqlalchemy.create_engine(f'sqlite:///{db_path}', echo=True)
+        self.create_db()
 
     def create_db(self):
-        if not os.path.exists("model/multigpt.db"):
+        if not os.path.exists(f"{self.__db_path}"):
             Base.create_db(self.__engine)
             with self.__create_session() as session:
                 free_type = SubscriptionType(name=SubscriptionLevelEnum.free, limit=30)
