@@ -1,5 +1,5 @@
 from fastapi import FastAPI, APIRouter, Request, Response
-import uvicorn
+# import uvicorn
 
 from src.API.routes.web import (
     user as web_user,
@@ -56,5 +56,5 @@ app.include_router(telegram_router)
 app.include_router(core_router)
 
 
-if __name__ == "__main__":
-    uvicorn.run(f"{__name__}:app", reload=True)
+# if __name__ == "__main__":
+#     uvicorn.run(f"{__name__}:app", reload=True)
