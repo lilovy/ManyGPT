@@ -77,7 +77,7 @@ async def add_user_project(
     llm: LLMs = Depends(get_llm),
     ):
 
-    base_model = db.get_base_model(model.base_model_id)
+    base_model = db.get_base_model(project.base_model_id)
 
     llm.new_bot(
         project.name,

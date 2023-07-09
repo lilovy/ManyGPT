@@ -111,7 +111,7 @@ async def add_user_project(
     if user_id != project.user_id:
         return {"status": status.HTTP_401_UNAUTHORIZED}
 
-    base_model = db.get_base_model(model.base_model_id)
+    base_model = db.get_base_model(project.base_model_id)
 
     llm.new_bot(
         project.name,
