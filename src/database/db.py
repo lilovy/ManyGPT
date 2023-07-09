@@ -13,7 +13,7 @@ class DBHelper:
 
     def __init__(self, db_path):
         self.__db_path = db_path
-        self.__engine = sqlalchemy.create_engine(f'sqlite:///{db_path}', echo=True)
+        self.__engine = sqlalchemy.create_engine(f'{db_path}', echo=True)
         self.create_db()
 
     def create_db(self):
