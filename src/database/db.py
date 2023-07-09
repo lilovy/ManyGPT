@@ -159,9 +159,9 @@ class DBHelper:
                     llm_list.append(llm.get_simple_dict())
                 return llm_list
             else:
-                userllm = session.get(UserLLM, model_id)
-                if userllm is not None:
-                    return userllm.llm.model.value
+                llm = session.get(LLM, model_id)
+                if llm is not None:
+                    return llm.model.value
                 else:
                     return None
 
