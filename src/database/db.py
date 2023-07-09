@@ -149,13 +149,20 @@ class DBHelper:
             result = conversations.__len__()
         return result
 
-    def get_base_model(self, model_id: int):
+    def get_base_model(self, model_id: int = None):
         with self.__create_session() as session:
-            userllm = session.get(UserLLM, model_id)
-            if userllm is not None:
-                return userllm.llm.model.value
+            if model_id is None:
+                llm_list = []
+                llms = session.query(LLM).all()
+                for llm in llms:
+                    llm_list.append(llm.get_simple_dict())
+                return llm_list
             else:
-                return None
+                userllm = session.get(UserLLM, model_id)
+                if userllm is not None:
+                    return userllm.llm.model.value
+                else:
+                    return None
 
     def add_user(self, user_id: int, username: str) -> None:
         limit: int
