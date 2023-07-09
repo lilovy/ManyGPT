@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Request, status, Response
 from fastapi.exceptions import HTTPException
+from datetime import datetime
 
 from ...models.user import ChangeUserPlan
 from ...models.subscription import Subscription
@@ -60,22 +61,19 @@ async def get_all_users(
     filter: str,
     db: DBHelper = Depends(get_db),
 ):
-    # match filter:
-    #     "all_users":
-    #         d
-    #     ""
     user_count = db.get_user_count_for_statistic()
 
-    buff = bar_chart(users_count)
+    content = bar_chart(users_count)
+    name = datetime.now()
 
     return Response(
-        content=buff,
+        content=content,
         media_type="image/png",
         headers={
             "Content-Disposition": f"attachment; filename={name}.txt",
-            "filename": f"{name}.txt",
+            "filename": f"{d}.txt",
         }
     )
 
 
-# @router.get("/stats/")
+@router.get("/stats/")
