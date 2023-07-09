@@ -63,7 +63,7 @@ async def get_user_project(
     )
 
 
-@router.get("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.get("/access")
 def сhecking_project_access(
     user_id: int,
     db: DBHelper = Depends(get_db),
@@ -74,7 +74,7 @@ def сhecking_project_access(
     return {"status": status.HTTP_401_UNAUTHORIZED}
 
 
-@router.post("/new", responses={201: {"model": ResponseStatus}})
+@router.post("/new")
 async def add_user_project(
     # project: NewUserProject,
     user_id: int,

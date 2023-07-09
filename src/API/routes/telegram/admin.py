@@ -13,7 +13,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-@router.post("/limits", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.post("/limits")
 async def change_limits(
     token: str,
     # plan: Subscription,
@@ -33,7 +33,7 @@ async def change_limits(
     return {"status": status.HTTP_200_OK}
 
 
-@router.post("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.post("/access")
 async def give_access(
     token: str,
     # plan: ChangeUserPlan,
