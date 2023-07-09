@@ -229,10 +229,11 @@ class DBHelper:
 
     def __add_file_parts(self, project_id: int, full_text: str):
         rows = full_text.split('\n')
+        full_file = []
         with self.__create_session() as session:
             for r in rows:
-                part = FilePart(r, project_id)
-                session.add(part)
+                full_file.append(FilePart(r, project_id))
+            session.add_all(full_file)
             session.commit()
 
     def add_result_data(self, project_id: int, data: str) -> None:
