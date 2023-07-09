@@ -105,16 +105,19 @@ async def add_bot(
     name: str,
     system_name: str,
     model_id: int,
-    model: str,
+    # model: str,
     prompt: str,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
 ):
+    model = db.get_base_model(model_id)
+
     llm.new_bot(
         name,
         prompt,
         model,
     )
+    
 
     db.add_user_model(
         user_id,

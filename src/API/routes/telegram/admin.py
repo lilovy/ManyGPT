@@ -58,7 +58,6 @@ async def give_access(
 
 @router.get("/stats/all_users")
 async def get_all_users(
-    filter: str,
     db: DBHelper = Depends(get_db),
 ):
     user_count = db.get_user_count_for_statistic()
@@ -76,4 +75,5 @@ async def get_all_users(
     )
 
 
-@router.get("/stats/")
+@router.get("/stats/growth")
+async def
