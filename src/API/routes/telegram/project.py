@@ -53,13 +53,14 @@ async def get_user_project(
     
     name = db.get_project_name(project_id)
 
-    return Response(
-        content=content,
-        media_type="text/plain",
-        headers={
-            "Content-Disposition": f"attachment; filename={name}.txt"
-        }
-    )
+    # return Response(
+    #     content=content,
+    #     media_type="text/plain",
+    #     headers={
+    #         "Content-Disposition": f"attachment; filename={name}.txt"
+    #     }
+    # )
+    return FileResponse(content, media_type="text/plain", filename=f"{name}.txt")
 
 
 @router.get("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
