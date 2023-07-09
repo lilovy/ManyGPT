@@ -8,5 +8,3 @@ def bar_chart(data: dict):
     buffer = io.BytesIO()
     pio.write_image(fig, buffer, format="png")
     return buffer.getvalue()
-
-print(bar_chart({"free": 3, "basic": 34, "advanced": 1}))

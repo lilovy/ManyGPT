@@ -55,14 +55,13 @@ async def give_access(
     return {"status": status.HTTP_200_OK}
 
 
-@router.get("/stats")
-async def view_stats(
+@router.get("/stats/all_users")
+async def get_all_users(
     db: DBHelper = Depends(get_db),
 ):
-    # users_count = db.get_user_count_for_statistic()
+    user_count = db.get_user_count_for_statistic()
 
-    buff = bar_chart({"free": 3, "basic": 34, "advanced": 1})
-    name = "293r"
+    buff = bar_chart(users_count)
 
     return Response(
         content=buff,
@@ -72,3 +71,6 @@ async def view_stats(
             "filename": f"{name}.txt",
         }
     )
+
+
+@router.get
