@@ -45,7 +45,7 @@ async def give_access(
 
     db.update_plan(
         plan.user_id,
-        plan.plan_id,
+        plan.plan,
     )
     return {"status": status.HTTP_200_OK}
 

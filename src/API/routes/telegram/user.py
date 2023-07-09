@@ -39,6 +39,6 @@ async def change_plan(
     ):
     db.update_plan(
         plan.user_id,
-        plan.plan_id,
+        plan.plan,
     )
     return {"status": status.HTTP_200_OK}

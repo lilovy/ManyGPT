@@ -25,7 +25,7 @@ async def get_count_msg(
 
     user_id = request.state.user.get("user_id")
     count = db.get_message_count(
-        msg.user_id,
+        # msg.user_id,
         msg.convo_id,
     )
     return Count(

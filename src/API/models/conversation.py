@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 class Conversation(BaseModel):
-    user_id: int
+    # user_id: int
     convo_id: int
 
 class NewConversation(BaseModel):

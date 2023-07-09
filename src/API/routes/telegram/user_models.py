@@ -52,10 +52,12 @@ async def add_user_model(
         return {"status": status.HTTP_401_UNAUTHORIZED}
     user_id = user.get("user_id")
 
+    base_model = db.get_base_model(model.base_model_id)
+
     llm.new_bot(
         model.system_name,
         model.prompt,
-        model.model,
+        base_model,
     )
 
     db.add_user_model(

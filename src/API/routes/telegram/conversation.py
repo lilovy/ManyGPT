@@ -18,7 +18,7 @@ async def get_count_msg(
     db: DBHelper = Depends(get_db),
 ):
     count = db.get_message_count(
-        msg.user_id,
+        # msg.user_id,
         msg.convo_id,
     )
 

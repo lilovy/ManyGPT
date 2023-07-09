@@ -122,6 +122,7 @@ async def add_user_project(
     db.add_project(
         user_id=project.user_id,
         name=project.name,
+        system_name=project.system_name,
         mimetype=project.mimetype,
         model_id=project.model_id,
         prompt=project.prompt,
