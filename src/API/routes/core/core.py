@@ -57,7 +57,7 @@ async def ask(
     # message: Message,
     user_id: int,
     # model: str,
-    convo_id: int,
+    # convo_id: int,
     request: str,
     db: DBHelper = Depends(get_db),
     llm: LLMs = Depends(get_llm),
@@ -68,6 +68,7 @@ async def ask(
     )
 
     if access:
+        convo_id = db.get_curr_convo_id(user_id)
         model = db.get_conversation_model(convo_id)
         content = llm.ask(
             request,
