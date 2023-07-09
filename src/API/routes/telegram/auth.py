@@ -1,4 +1,5 @@
 from fastapi import Depends, APIRouter, status
+from pydantic import ValidationError
 
 from .user import User
 from ...dependencies.dependencies import *
@@ -15,9 +16,12 @@ async def login(
     db: DBHelper = Depends(get_db),
     ):
 
-    db.add_user(
-        user.id,
-        user.username,
-        )
+    try:
+        db.add_user(
+            user.id,
+            user.username,
+            )
 
-    return {},  201
+        return {}, 201
+    except ValidationError as e:
+        return e.json(), 422
