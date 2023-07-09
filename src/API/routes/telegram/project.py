@@ -41,7 +41,7 @@ async def get_user_projects(
     return projects
 
 
-@router.get("/file", response_class=FileResponse)
+@router.get("/file")
 async def get_user_project(
     project_id: int,
     db: DBHelper = Depends(get_db),
