@@ -1,7 +1,6 @@
 import datetime
 import os.path
 from sqlalchemy import and_
-
 import sqlalchemy
 from src.database.model.enums import *
 from sqlalchemy.orm import sessionmaker
@@ -151,13 +150,20 @@ class DBHelper:
             result = conversations.__len__()
         return result
 
-    def get_base_model(self, model_id: int):
+    def get_base_model(self, model_id: int = None):
         with self.__create_session() as session:
-            userllm = session.get(UserLLM, model_id)
-            if userllm is not None:
-                return userllm.llm.model.value
+            if model_id is None:
+                llm_list = []
+                llms = session.query(LLM).all()
+                for llm in llms:
+                    llm_list.append(llm.get_simple_dict())
+                return llm_list
             else:
-                return None
+                userllm = session.get(UserLLM, model_id)
+                if userllm is not None:
+                    return userllm.llm.model.value
+                else:
+                    return None
 
     def add_user(self, user_id: int, username: str) -> None:
         limit: int
@@ -246,7 +252,7 @@ class DBHelper:
                         model.is_default = True
                 session.commit()
 
-    def update_plan(self, user_id: int, plan: SubscriptionLevelEnum) -> None:
+    def update_plan(self, user_id: int, plan: str) -> None:
         with self.__create_session() as session:
             user = session.get(User, user_id)
             subscription = session.query(SubscriptionType).filter(SubscriptionType.name == plan).first()
@@ -254,7 +260,7 @@ class DBHelper:
                 user.subscription_id = subscription.id
                 session.commit()
 
-    def update_limits(self, plan: SubscriptionLevelEnum, new_limit: int) -> None:
+    def update_limits(self, plan: str, new_limit: int) -> None:
         with self.__create_session() as session:
             subscription = session.query(SubscriptionType).filter(SubscriptionType.name == plan).first()
             if subscription is not None:
@@ -327,3 +333,46 @@ class DBHelper:
             if user is not None:
                 return user.subscription_type.name.value
         return None
+
+    def user_growth(self, plan: str = None, period: int = 7) -> dict:
+        end_date = datetime.datetime.now()
+        start_date = end_date - datetime.timedelta(days=period)
+        result = {}
+        with self.__create_session() as session:
+            users_data = []
+            users = session.query(User).filter(
+                and_(start_date <= User.registration_date, User.registration_date <= end_date)).all()
+            if users is None:
+                return {}
+            if plan is not None:
+                for user in users:
+                    if user.subscription_type.name.value == plan:
+                        users_data.append(user)
+            else:
+                users_data = users
+            for day in range(period):
+                some_date = end_date.date() - datetime.timedelta(day)
+                count = 0
+                for user in users_data:
+                    if user.registration_date.date() == some_date:
+                        count += 1
+                result[some_date] = count
+
+        return result
+
+    def amount_of_interaction(self, period: int = 7):
+        result = {}
+        end_date = datetime.datetime.now()
+        start_date = end_date - datetime.timedelta(days=period)
+        with self.__create_session() as session:
+            messages = session.query(Message).filter(and_(start_date <= Message.time, Message.time <= end_date)).all()
+            if messages is None:
+                return {}
+            for day in range(period):
+                some_date = end_date.date() - datetime.timedelta(day)
+                count = 0
+                for message in messages:
+                    if message.time.date() == some_date:
+                        count += 1
+                result[some_date] = count
+        return result
