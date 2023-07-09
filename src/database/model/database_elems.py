@@ -26,6 +26,7 @@ class Conversation(Base):
     user = relationship("User", back_populates="conversation")
     user_llm = relationship("UserLLM", back_populates="conversation")
     message = relationship("Message", back_populates="conversation")
+    curr_convo = relationship("CurrConvo", back_populates="conversation")
 
     def __init__(self,  user_id: int, name: str, llm_id: int, **kw: Any):
         super().__init__(**kw)
@@ -219,6 +220,8 @@ class User(Base):
     user_llm = relationship("UserLLM", back_populates="user")
     conversation = relationship("Conversation", back_populates="user")
     subscription_type = relationship("SubscriptionType", back_populates="user")
+
+    curr_convo = relationship("CurrConvo", back_populates="user")
 
     def __init__(self, user_id: int, username, subscription_type_id: int, **kw: Any):
         super().__init__(**kw)
