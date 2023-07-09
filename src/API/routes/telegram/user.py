@@ -10,6 +10,14 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/user", tags=["user"])
 
 
+@router.get("/plans")
+async def get_plans(
+    db: DBHelper = Depends(get_db),
+):
+    plans = db.get_subs()
+    return plans
+
+
 @router.get("/")
 async def get_user(
     user_id: int,

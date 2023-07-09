@@ -15,13 +15,6 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/admin", tags=["admin"])
 
 
-@router.get("/plans")
-async def get_plans(
-    db: DBHelper = Depends(get_db),
-):
-    plans = db.get_subs()
-    return plans
-
 
 @router.post("/limits")
 async def change_limits(
