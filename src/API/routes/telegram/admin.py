@@ -58,4 +58,5 @@ async def give_access(
 async def view_stats(
     db: DBHelper = Depends(get_db),
 ):
-    ...
+    users_count = db.get_user_count_for_statistic()
+    
