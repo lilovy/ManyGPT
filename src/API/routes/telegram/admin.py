@@ -57,8 +57,13 @@ async def give_access(
 
 @router.get("/stats/all_users")
 async def get_all_users(
+    filter: str,
     db: DBHelper = Depends(get_db),
 ):
+    # match filter:
+    #     "all_users":
+    #         d
+    #     ""
     user_count = db.get_user_count_for_statistic()
 
     buff = bar_chart(users_count)
@@ -73,4 +78,4 @@ async def get_all_users(
     )
 
 
-@router.get
+# @router.get("/stats/")
