@@ -14,7 +14,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/models", tags=["models"])
 
 
-@router.get("/count", response_model=Count, status_code=200)
+@router.get("/count")
 async def get_count_models(
     request: Request,
     db: DBHelper = Depends(get_db),
@@ -33,7 +33,7 @@ async def get_count_models(
     ) 
 
 
-@router.get("/", response_model=List[UserModelOutput], status_code=200, responses={401: {"model": ResponseStatus}})
+@router.get("/")
 async def get_user_models(
     request: Request,
     offset: int = Query (0, ge=0),
@@ -48,7 +48,7 @@ async def get_user_models(
     user_models = db.get_user_models(user_id, offset, limit)
     return [UserModelOutput(**models) for models in user_models]
 
-@router.post("/new", responses={201: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.post("/new")
 async def add_user_model(
     request: Request,
     model: UserModel,

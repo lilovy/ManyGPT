@@ -7,7 +7,7 @@ class Conversation(BaseModel):
     convo_id: int
 
 class NewConversation(BaseModel):
-    user_id: int
+    # user_id: int
     name: str
     model_id: int
 
@@ -32,7 +32,7 @@ class Messages(BaseModel):
     time: datetime
 
 class Bot(BaseModel):
-    user_id: int
+    # user_id: int
     name: str
     system_name: str
     model_id: int

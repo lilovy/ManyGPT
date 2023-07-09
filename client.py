@@ -14,7 +14,7 @@ from src.API.routes.telegram import (
     user_models as telegram_user_models,
     project as telegram_project,
     conversation as telegram_convo,
-    admin as telegram_admin,
+    # admin as telegram_admin,
 )
 from src.API.routes.core import (
     core,
@@ -43,7 +43,7 @@ telegram_router.include_router(telegram_auth.router)
 telegram_router.include_router(telegram_user_models.router)
 telegram_router.include_router(telegram_project.router)
 telegram_router.include_router(telegram_convo.router)
-telegram_router.include_router(telegram_admin.router)
+# telegram_router.include_router(telegram_admin.router)
 
 
 core_router = APIRouter(prefix=f"{BASE_API_PATH}")

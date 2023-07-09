@@ -10,7 +10,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/user", tags=["user"])
 
 
-@router.get("/", response_model=UserOutput, status_code=200, responses={401: {"model": ResponseStatus}})
+@router.get("/")
 async def get_user(
     user_id: int,
     db: DBHelper = Depends(get_db),
@@ -19,9 +19,10 @@ async def get_user(
     user = db.get_user(user_id)
     if not user:
         return {"status": status.HTTP_401_UNAUTHORIZED}
-    return UserOutput(**user)
+    # return UserOutput(**user)
+    return user
 
-@router.put("/default_model", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.put("/default_model")
 async def change_model(
     # change_model: ChangeDefaultModel,
     user_id: int,
@@ -34,7 +35,7 @@ async def change_model(
     )
     return {"status": status.HTTP_200_OK}
 
-@router.put("/plan", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.put("/plan")
 async def change_plan(
     # plan: ChangeUserPlan,
     user_id: int,

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Request, status, Query, Response, UploadFile
 from fastapi.responses import FileResponse
 from typing import List
+from io import BytesIO
 
 from ....core.llms import LLMs
 from ...models.project import UserProject, NewUserProject, Projects
@@ -14,7 +15,7 @@ from ....database.db import DBHelper
 router = APIRouter(prefix="/project", tags=["project"])
 
 
-@router.get("/count", response_model=Count, status_code=200)
+@router.get("/count", status_code=200)
 async def get_count_projects(
     user_id: int,
     db: DBHelper = Depends(get_db),
@@ -27,7 +28,7 @@ async def get_count_projects(
     )
 
 
-@router.get("/all", response_model=List[Projects], status_code=200)
+@router.get("/all", status_code=200)
 async def get_user_projects(
     user_id: int,
     offset: int = Query (0, ge=0),
@@ -37,30 +38,33 @@ async def get_user_projects(
 
     projects = db.get_user_projects(user_id, offset, limit)
 
-    return [Projects(**project) for project in projects]
+    # return [Projects(**project) for project in projects]
+    return projects
 
 
-@router.get("/file", response_class=FileResponse)
+@router.get("/file")
 async def get_user_project(
     project_id: int,
-    name: str,
     db: DBHelper = Depends(get_db),
     ):
     content = db.get_user_data_files(
         project_id,
     )
     content = "\n".join(content)
+    
+    name = db.get_project_name(project_id)
 
     return Response(
         content=content,
         media_type="text/plain",
         headers={
-            "Content-Disposition": f"attachment; filename={name}.txt"
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
         }
     )
 
 
-@router.get("/access", responses={200: {"model": ResponseStatus}, 401: {"model": ResponseStatus}})
+@router.get("/access")
 def сhecking_project_access(
     user_id: int,
     db: DBHelper = Depends(get_db),
@@ -71,7 +75,7 @@ def сhecking_project_access(
     return {"status": status.HTTP_401_UNAUTHORIZED}
 
 
-@router.post("/new", responses={201: {"model": ResponseStatus}})
+@router.post("/new")
 async def add_user_project(
     # project: NewUserProject,
     user_id: int,

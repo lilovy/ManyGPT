@@ -7,7 +7,7 @@ class UserProject(BaseModel):
     project_id: int
 
 class NewUserProject(BaseModel):
-    user_id: int
+    # user_id: int
     name: str
     mimetype: str
     system_name: str

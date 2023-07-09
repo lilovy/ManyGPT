@@ -51,7 +51,7 @@ async def ask_ws(
         
 
 
-@router.post("/ask", response_model=MessageFull, status_code=200, responses={404: {"model": ResponseStatus}})
+@router.post("/ask")
 async def ask(
     # request: Request,
     # message: Message,
@@ -87,7 +87,7 @@ async def ask(
     return {"status": "No token"}
 
 
-@router.get("/base_models", response_model=List[ModelBase])
+@router.get("/base_models")
 async def ask(
     db: DBHelper = Depends(get_db),
 ):

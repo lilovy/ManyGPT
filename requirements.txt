@@ -4,3 +4,6 @@ poe-api
 sqlalchemy
 PyJWT
 python-multipart
+plotly
+pandas
+kaleido
