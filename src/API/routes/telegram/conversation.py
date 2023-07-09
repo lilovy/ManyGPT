@@ -111,7 +111,7 @@ async def add_bot(
     llm: LLMs = Depends(get_llm),
 ):
     llm.new_bot(
-        name,
+        system_name,
         prompt,
         model,
     )

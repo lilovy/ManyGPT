@@ -58,4 +58,60 @@ async def give_access(
 async def view_stats(
     db: DBHelper = Depends(get_db),
 ):
+<<<<<<< Updated upstream
     ...
+=======
+    # user_count = db.get_user_count_for_statistic()
+    
+
+    content = bar_chart({"free": 3, "basic": 34, "advanced": 1})
+    name = datetime.now()
+
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
+
+
+@router.get("/stats/growth")
+async def get_user_growth(
+    period: int = None,
+    plan: str = None,
+    db: DBHelper = Depends(get_db),
+):
+    user_growth = db.user_growth(period=period, plan=plan)
+    
+    name = datetime.now()
+
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
+
+
+@router.get("/stats/interaction")
+async def get_user_interaction(
+    period: int = None,
+    db: DBHelper = Depends(get_db),
+):
+    amount_of_interaction = db.amount_of_interaction(period=period)
+    
+    name = datetime.now()
+
+    return Response(
+        content=content,
+        media_type="image/png",
+        headers={
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
+        }
+    )
+>>>>>>> Stashed changes
