@@ -11,7 +11,7 @@ class ChangeDefaultModel(BaseModel):
 
 class ChangeUserPlan(BaseModel):
     user_id: int
-    plan_id: int
+    plan: str
 
 class Subscription(BaseModel):
     id: int
