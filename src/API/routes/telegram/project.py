@@ -58,7 +58,8 @@ async def get_user_project(
         content=content,
         media_type="text/plain",
         headers={
-            "Content-Disposition": f"attachment; filename={name}.txt"
+            "Content-Disposition": f"attachment; filename={name}.txt",
+            "filename": f"{name}.txt",
         }
     )
 
