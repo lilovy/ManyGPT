@@ -155,3 +155,5 @@ cython_debug/
 
 
 /src/database/multigpt.db
+
+config.py
