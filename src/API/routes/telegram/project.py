@@ -47,7 +47,7 @@ async def get_user_project(
     project_id: int,
     db: DBHelper = Depends(get_db),
     ):
-    content = db.get_user_data_files(
+    content = db.get_raw_files(
         project_id,
     )
     content = "\n".join(content)
