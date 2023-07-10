@@ -432,4 +432,4 @@ class DBHelper:
             if fileParts is not None:
                 for f in fileParts:
                     result.append(f.part)
-        return fileParts
+        return result
