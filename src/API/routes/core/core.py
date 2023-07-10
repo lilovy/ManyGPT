@@ -94,4 +94,4 @@ async def ask(
 ):
     base_models = db.get_base_model()
 
-    return base_models
+    return base_models[:len(base_models)]

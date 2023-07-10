@@ -15,7 +15,7 @@ async def get_plans(
     db: DBHelper = Depends(get_db),
 ):
     plans = db.get_subs()
-    return plans
+    return plans[:len(plans)]
 
 
 @router.get("/")
