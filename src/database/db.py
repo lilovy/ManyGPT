@@ -17,16 +17,16 @@ class DBHelper:
         self.create_db()
 
     def create_db(self):
-        if not os.path.exists(f"{self.__db_path}"):
-            Base.create_db(self.__engine)
-            with self.__create_session() as session:
-                free_type = SubscriptionType(name=SubscriptionLevelEnum.free, limit=30)
-                basic_type = SubscriptionType(name=SubscriptionLevelEnum.basic, limit=1000000)
-                advanced_type = SubscriptionType(name=SubscriptionLevelEnum.advanced, limit=10000000)
-                gpt = LLM(ModelEnum.ChatGPT)
-                claude = LLM(ModelEnum.Claude)
-                session.add_all([free_type, basic_type, advanced_type, gpt, claude])
-                session.commit()
+        # if not os.path.exists(f"{self.__db_path}"):
+        Base.create_db(self.__engine)
+        # with self.__create_session() as session:
+        #     free_type = SubscriptionType(name=SubscriptionLevelEnum.free, limit=30)
+        #     basic_type = SubscriptionType(name=SubscriptionLevelEnum.basic, limit=1000000)
+        #     advanced_type = SubscriptionType(name=SubscriptionLevelEnum.advanced, limit=10000000)
+        #     gpt = LLM(ModelEnum.ChatGPT)
+        #     claude = LLM(ModelEnum.Claude)
+        #     session.add_all([free_type, basic_type, advanced_type, gpt, claude])
+        #     session.commit()
 
     def __create_session(self):
         Session = sessionmaker(bind=self.__engine)
