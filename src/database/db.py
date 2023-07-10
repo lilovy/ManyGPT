@@ -424,3 +424,12 @@ class DBHelper:
             for sub in subscriptions:
                 result.append(sub.get_simple_dict())
         return result
+
+    def get_raw_files(self, project_id: int) -> list:
+        result = []
+        with self.__create_session() as session:
+            fileParts = session.query(FilePart).filter(FilePart.project_id == project_id).all()
+            if fileParts is not None:
+                for f in fileParts:
+                    result.append(f.part)
+        return fileParts
