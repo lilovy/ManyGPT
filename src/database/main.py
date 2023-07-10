@@ -1,6 +1,8 @@
 from .db import DBHelper
 from config import db_path
 
+db = DBHelper(db_path)
+
 def get_db() -> DBHelper:
-    db = DBHelper(db_path)
+    # db = DBHelper(db_path)
     yield db
