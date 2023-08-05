@@ -56,7 +56,7 @@ def get_llm():
     yield llm
 
 if __name__ == "__main__":
-    client = LLMs("o6BvUBrXYXuis5Xb5Y1CLg%3D%3D")
+    client = LLMs(token)
     ask = client.ask("hi, how a u?", flush=True)
     for i in ask:
         print(i, end="", flush=True)
